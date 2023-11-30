@@ -2,6 +2,11 @@ pipeline {
     agent none
 
     stages {
+        stage('Bootstrap') {
+            steps {
+                sh './deploy/build.sh --os=bootstrap'
+            }
+        }
         stage('BuildAndTest') {
             matrix{
                 agent any
