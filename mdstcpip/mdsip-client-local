@@ -1,0 +1,2 @@
+#!/bin/sh
+exec mdsip -P local 2>> ~/mdsip-local.log

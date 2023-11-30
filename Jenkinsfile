@@ -2,19 +2,27 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
-            steps {
-                echo 'Building..'
+        stage('BuildAndTest') {
+            matrix{
+                agent any
+                axes {
+                    axis {
+                        name 'OS'
+                        values 'ubuntu18' 'ubuntu20' 'ubuntu22'
+                    }
+                }
             }
-        }
-        stage('Test') {
-            steps {
-                echo 'Testing..'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
+            stages {
+                stage('Build') {
+                    steps {
+                        sh './deploy/build.sh --os=${PLATFORM}'
+                    }
+                }
+                stage('Test') {
+                    steps {
+                        echo 'Testing...'
+                    }
+                }
             }
         }
     }
