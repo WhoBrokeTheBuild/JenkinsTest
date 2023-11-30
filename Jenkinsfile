@@ -3,32 +3,30 @@ pipeline {
 
     stages {
         stage('BuildAndTest') {
-            matrix{
-                agent any
-                axes {
-                    axis {
-                        name 'OS'
-                        values 'ubuntu18', 'ubuntu20', 'ubuntu22'
-                    }
-                }
-                currentBuild.displayName "${OS}"
-                stages {
-                    stage('Bootstrap') {
+            steps {
+                dynamicMatrix([
+                    failFast: false,
+                    axes: [
+                        'OS': ['ubuntu18', 'ubuntu20', 'ubuntu22']
+                    ],
+                    actions: {
+                    stage('Bootstrap ${OS}') {
                         steps {
                             sh './deploy/build.sh --os=bootstrap'
                         }
                     }
-                    stage('Build') {
+                    stage('Build ${OS}') {
                         steps {
                             sh './deploy/build.sh --os=${OS} --release'
                         }
                     }
-                    stage('Test') {
+                    stage('Test ${OS}') {
                         steps {
                             echo 'Testing...'
                         }
                     }
-                }
+                    }
+                ])
             }
         }
     }
