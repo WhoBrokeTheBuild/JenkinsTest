@@ -11,6 +11,7 @@ pipeline {
                         values 'ubuntu18', 'ubuntu20', 'ubuntu22'
                     }
                 }
+                display_name "${OS}"
                 stages {
                     stage('Bootstrap') {
                         steps {
