@@ -12,6 +12,8 @@ pipeline {
                     }
                 }
                 stages {
+                    checkout scm
+                    
                     stage('Bootstrap') {
                         steps {
                             sh './deploy/build.sh --os=bootstrap'
