@@ -1,7 +1,12 @@
 pipeline {
-    agent none
+    agent any
 
     stages {
+        stage('Bootstrap') {
+            steps {
+                sh './deploy/build.sh --os=bootstrap'
+            }
+        }
         stage('BuildAndTest') {
             matrix{
                 agent any
@@ -12,11 +17,6 @@ pipeline {
                     }
                 }
                 stages {
-                    stage('Bootstrap') {
-                        steps {
-                            sh './deploy/build.sh --os=bootstrap'
-                        }
-                    }
                     stage('Build') {
                         steps {
                             sh './deploy/build.sh --os=${OS} --release'
