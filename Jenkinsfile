@@ -15,7 +15,7 @@ pipeline {
             stages {
                 stage('Build') {
                     steps {
-                        sh './deploy/build.sh --os=${PLATFORM}'
+                        sh './deploy/build.sh --os=${PLATFORM} --release'
                     }
                 }
                 stage('Test') {
