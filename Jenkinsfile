@@ -8,13 +8,13 @@ pipeline {
                 axes {
                     axis {
                         name 'OS'
-                        values 'ubuntu18' 'ubuntu20' 'ubuntu22'
+                        values 'ubuntu18', 'ubuntu20', 'ubuntu22'
                     }
                 }
                 stages {
                     stage('Build') {
                         steps {
-                            sh './deploy/build.sh --os=${PLATFORM} --release'
+                            sh './deploy/build.sh --os=${OS} --release'
                         }
                     }
                     stage('Test') {
