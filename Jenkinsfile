@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent none
 
     stages {
         stage('BuildAndTest') {
@@ -11,16 +11,16 @@ pipeline {
                         values 'ubuntu18' 'ubuntu20' 'ubuntu22'
                     }
                 }
-            }
-            stages {
-                stage('Build') {
-                    steps {
-                        sh './deploy/build.sh --os=${PLATFORM} --release'
+                stages {
+                    stage('Build') {
+                        steps {
+                            sh './deploy/build.sh --os=${PLATFORM} --release'
+                        }
                     }
-                }
-                stage('Test') {
-                    steps {
-                        echo 'Testing...'
+                    stage('Test') {
+                        steps {
+                            echo 'Testing...'
+                        }
                     }
                 }
             }
