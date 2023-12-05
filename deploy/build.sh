@@ -597,6 +597,7 @@ then
 	popd
     done
 fi
+echo "workspace: ${WORKSPACE}"
 mkdir -p ${WORKSPACE}
 if [ -z "$BRANCH" ]
 then
