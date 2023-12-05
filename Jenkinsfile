@@ -7,7 +7,6 @@ pipeline {
     stages {
         stage('BuildAndTest') {
             steps {
-                sh 'env'
                 dynamicMatrix([
                     failFast: false,
                     axes: [
@@ -15,6 +14,8 @@ pipeline {
                     ],
                     actions: {
                         agent any
+                        
+                        sh 'env'
 
                         dir ("${OS}") {
                             stage("${OS} Clone") {
