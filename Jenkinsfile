@@ -5,31 +5,35 @@ pipeline {
 
     stages {
         stage('BuildAndTest') {
-            dynamicMatrix([
-                failFast: false,
-                axes: [
-                    OS: ['ubuntu18', 'ubuntu20', 'ubuntu22']
-                ],
-                actions: {
-                    script {
-                        stage("${OS} Bootstrap") {
-                            steps {
-                                sh "./deploy/build.sh --os=bootstrap"
+            matrix {
+                axes {
+                    axis {
+                        name 'OS',
+                        values 'ubuntu18', 'ubuntu20', 'ubuntu22'
+                    }
+                }
+                stages {
+                    stage('Matrix') {
+                        script {
+                            stage("${OS} Bootstrap") {
+                                steps {
+                                    sh "./deploy/build.sh --os=bootstrap"
+                                }
                             }
-                        }
-                        stage("${OS} Build") {
-                            steps {
-                                sh "./deploy/build.sh --os=${OS} --release"
+                            stage("${OS} Build") {
+                                steps {
+                                    sh "./deploy/build.sh --os=${OS} --release"
+                                }
                             }
-                        }
-                        stage("${OS} Test") {
-                            steps {
-                                echo "Testing..."
+                            stage("${OS} Test") {
+                                steps {
+                                    echo "Testing..."
+                                }
                             }
                         }
                     }
                 }
-            ])
+            }
         }
     }
 }
