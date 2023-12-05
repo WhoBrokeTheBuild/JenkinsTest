@@ -15,6 +15,10 @@ pipeline {
                     actions: {
                         
                         dir ("${OS}") {
+                            environment {
+                                WORKSPACE = "${WORKSPACE}/${OS}"
+                            }
+                            
                             stage("${OS} Clone") {
                                 checkout scm;
                                 sh 'env'
