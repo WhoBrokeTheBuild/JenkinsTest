@@ -4,24 +4,27 @@ pipeline {
     agent any
 
     stages {
-        stage('Bootstrap') {
-            steps {
-                sh "./deploy/build.sh --os=bootstrap"
-            }
-        }
         stage('BuildAndTest') {
             steps {
                 dynamicMatrix([
                     failFast: false,
                     axes: [
-                        OS: ['ubuntu18']
+                        OS: ['ubuntu18', 'ubuntu20', 'ubuntu22']
                     ],
                     actions: {
-                        stage("${OS} Build") {
-                            sh "./deploy/build.sh --os=${OS} --release"
-                        }
-                        stage("${OS} Test") {
-                            echo "Testing..."
+                        dir ("${OS}") {
+                            stage("${OS} Clone") {
+                                checkout scm;
+                            }
+                            stage("${OS} Bootstrap") {
+                                sh "./deploy/build.sh --os=bootstrap"
+                            }
+                            stage("${OS} Build") {
+                                sh "./deploy/build.sh --os=${OS} --release"
+                            }
+                            stage("${OS} Test") {
+                                echo "Testing..."
+                            }
                         }
                     }
                 ])
