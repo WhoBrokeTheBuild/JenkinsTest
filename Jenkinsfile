@@ -15,7 +15,7 @@ pipeline {
                             'ubuntu18', 'ubuntu20', 'ubuntu22',
                             'rhel7', 'rhel8', 'rhel9',
                             'alpine3.9-armhf', 'alpine3.9-x86_64', 'alpine3.9-x86',
-                            'debian9', 'debian10', 'debian11'
+                            'debian9-64', 'debian10-64', 'debian11-64'
                         ]
                     ],
                     actions: {
