@@ -7,8 +7,6 @@ pipeline {
     stages {
         stage('BuildAndTest') {
             steps {
-                sh 'env'
-
                 dynamicMatrix([
                     failFast: false,
                     axes: [
@@ -19,6 +17,7 @@ pipeline {
                         dir ("${OS}") {
                             stage("${OS} Clone") {
                                 checkout scm;
+                                sh 'env'
                             }
                             stage("${OS} Bootstrap") {
                                 sh "./deploy/build.sh --os=bootstrap"
