@@ -13,23 +13,19 @@ pipeline {
                     }
                 }
                 stages {
-                    stage('Matrix') {
-                        script {
-                            stage("${OS} Bootstrap") {
-                                steps {
-                                    sh "./deploy/build.sh --os=bootstrap"
-                                }
-                            }
-                            stage("${OS} Build") {
-                                steps {
-                                    sh "./deploy/build.sh --os=${OS} --release"
-                                }
-                            }
-                            stage("${OS} Test") {
-                                steps {
-                                    echo "Testing..."
-                                }
-                            }
+                    stage("${OS} Bootstrap") {
+                        steps {
+                            sh "./deploy/build.sh --os=bootstrap"
+                        }
+                    }
+                    stage("${OS} Build") {
+                        steps {
+                            sh "./deploy/build.sh --os=${OS} --release"
+                        }
+                    }
+                    stage("${OS} Test") {
+                        steps {
+                            echo "Testing..."
                         }
                     }
                 }
