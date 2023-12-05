@@ -1,18 +1,21 @@
 @Library('camunda-community') _
 
 pipeline {
-    agent any
+    agent none
     options { skipDefaultCheckout() } 
 
     stages {
         stage('BuildAndTest') {
             steps {
+                sh 'env'
                 dynamicMatrix([
                     failFast: false,
                     axes: [
                         OS: ['ubuntu18', 'ubuntu20', 'ubuntu22']
                     ],
                     actions: {
+                        agent any
+
                         dir ("${OS}") {
                             stage("${OS} Clone") {
                                 checkout scm;
