@@ -14,21 +14,16 @@ pipeline {
                     ],
                     actions: {
                         
-                        dir ("${OS}") {
-                            environment {
-                                WORKSPACE = "${WORKSPACE}/${OS}"
-                            }
-                            
+                        ws("${OS}") {
                             stage("${OS} Clone") {
                                 checkout scm;
-                                sh 'env'
                             }
                             stage("${OS} Bootstrap") {
                                 sh "./deploy/build.sh --os=bootstrap"
+                            }
+                            stage("${OS} Build") {
                                 sh "./deploy/build.sh --os=${OS} --release"
                             }
-                            // stage("${OS} Build") {
-                            // }
                             // stage("${OS} Test") {
                             //     echo "Testing..."
                             // }
