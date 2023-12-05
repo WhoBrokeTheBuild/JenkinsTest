@@ -14,7 +14,7 @@ pipeline {
                 dynamicMatrix([
                     failFast: false,
                     axes: [
-                        OS: ['ubuntu18', 'ubuntu20', 'ubuntu22']
+                        OS: ['ubuntu18']
                     ],
                     actions: {
                         stage("${OS} Build") {
