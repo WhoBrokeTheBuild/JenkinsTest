@@ -13,19 +13,13 @@ pipeline {
                     ],
                     actions: {
                         stage("${OS} Bootstrap") {
-                            steps {
-                                sh "./deploy/build.sh --os=bootstrap"
-                            }
+                            sh "./deploy/build.sh --os=bootstrap"
                         }
                         stage("${OS} Build") {
-                            steps {
-                                sh "./deploy/build.sh --os=${OS} --release"
-                            }
+                            sh "./deploy/build.sh --os=${OS} --release"
                         }
                         stage("${OS} Test") {
-                            steps {
-                                echo "Testing..."
-                            }
+                            echo "Testing..."
                         }
                     }
                 ])
