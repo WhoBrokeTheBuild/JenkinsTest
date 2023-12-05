@@ -8,7 +8,7 @@ pipeline {
             matrix {
                 axes {
                     axis {
-                        name 'OS',
+                        name 'OS'
                         values 'ubuntu18', 'ubuntu20', 'ubuntu22'
                     }
                 }
