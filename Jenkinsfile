@@ -6,9 +6,9 @@ pipeline {
 
     stages {
         stage('BuildAndTest') {
-            sh 'env'
-
             steps {
+                sh 'env'
+
                 dynamicMatrix([
                     failFast: false,
                     axes: [
