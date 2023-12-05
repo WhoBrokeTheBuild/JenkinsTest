@@ -512,10 +512,7 @@ then
 fi
 if [ -z "$NEW_WORKSPACE" ]
 then
-    if [ -z "$WORKSPACE" ]
-    then
-       WORKSPACE=$(pwd)/build/${OS}/${BRANCH}
-    fi
+    WORKSPACE=$(pwd)/build/${OS}/${BRANCH}
 else
     WORKSPACE=$(realpath ${NEW_WORKSPACE})
 fi
@@ -597,7 +594,6 @@ then
 	popd
     done
 fi
-echo "workspace: ${WORKSPACE}"
 mkdir -p ${WORKSPACE}
 if [ -z "$BRANCH" ]
 then
