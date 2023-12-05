@@ -13,19 +13,25 @@ pipeline {
                     }
                 }
                 stages {
-                    stage("${OS} Bootstrap") {
+                    stage('SpecificOS') {
                         steps {
-                            sh "./deploy/build.sh --os=bootstrap"
-                        }
-                    }
-                    stage("${OS} Build") {
-                        steps {
-                            sh "./deploy/build.sh --os=${OS} --release"
-                        }
-                    }
-                    stage("${OS} Test") {
-                        steps {
-                            echo "Testing..."
+                            script {
+                                stage("${OS} Bootstrap") {
+                                    steps {
+                                        sh "./deploy/build.sh --os=bootstrap"
+                                    }
+                                }
+                                stage("${OS} Build") {
+                                    steps {
+                                        sh "./deploy/build.sh --os=${OS} --release"
+                                    }
+                                }
+                                stage("${OS} Test") {
+                                    steps {
+                                        echo "Testing..."
+                                    }
+                                }
+                            }
                         }
                     }
                 }
