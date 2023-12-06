@@ -39,11 +39,11 @@ pipeline {
                                     sh "docker run --rm --privileged multiarch/qemu-user-static:register --reset"
                                 }
 
-                                // sh "./deploy/build.sh --os=${OS} --release"
+                                sh "./deploy/build.sh --os=${OS} --release"
                             }
                             // archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true 
                             if (env.OS == "ubuntu18") {
-                                stage("${OS} Test") {
+                                stage("Test IDL/MATLAB") {
                                     echo "Testing..."
                                     // sh "false"
                                 }   
