@@ -69,10 +69,8 @@ pipeline {
         stage('Publish') {
             when {
                 anyOf {
-                    {
-                        branch 'alpha';
-                        branch 'stable';
-                    }
+                    branch 'alpha';
+                    branch 'stable';
                 }
             }
             steps {
