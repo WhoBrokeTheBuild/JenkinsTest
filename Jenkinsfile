@@ -13,18 +13,20 @@ pipeline {
     options { skipDefaultCheckout() } 
 
     stages {
-        stage('BuildAndTest') {
+        stage('Setup') {
             steps {
                 cleanWs()
                 sh 'printenv'
-
+            }
+        }
+        stage('BuildAndTest') {
+            steps {
                 dynamicMatrix([
                     failFast: false,
                     axes: [
                         OS: OSList
                     ],
                     actions: {
-                        
                         ws("${OS}") {
                             stage("${OS} Clone") {
                                 checkout scm;
@@ -43,7 +45,7 @@ pipeline {
                             if (env.OS == "ubuntu18") {
                                 stage("${OS} Test") {
                                     echo "Testing..."
-                                    sh "false"
+                                    // sh "false"
                                 }   
                             }
                         }
@@ -52,21 +54,22 @@ pipeline {
             }
         }
         stage('Publish') {
+            when {
+                expression env.BRANCH_NAME == "alpha" || env.BRANCH_NAME == "stable"
+            }
             steps {
                 script {
-                    if (env.BRANCH_NAME == "alpha" || env.BRANCH_NAME == "stable") {
-                        dynamicMatrix([
-                            failFast: false,
-                            axes: [
-                                OS: OSList
-                            ],
-                            actions: {
-                                stage("${OS} Publish") {
-                                    echo "Publishing ${BRANCH_NAME}..."
-                                }
+                    dynamicMatrix([
+                        failFast: false,
+                        axes: [
+                            OS: OSList
+                        ],
+                        actions: {
+                            stage("${OS} Publish") {
+                                echo "Publishing ${BRANCH_NAME}..."
                             }
-                        ])
-                    }
+                        }
+                    ])
                 }
             }
         }
