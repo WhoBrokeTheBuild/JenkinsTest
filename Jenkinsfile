@@ -55,7 +55,9 @@ pipeline {
         }
         stage('Publish') {
             when {
-                expression env.BRANCH_NAME == "alpha" || env.BRANCH_NAME == "stable"
+                expression {
+                    return env.BRANCH_NAME == "alpha" || env.BRANCH_NAME == "stable"
+                }
             }
             steps {
                 script {
