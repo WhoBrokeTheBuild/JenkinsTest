@@ -35,23 +35,21 @@ pipeline {
                                     sh "docker run --rm --privileged multiarch/qemu-user-static:register --reset"
                                 }
                                 
-                                sh "./deploy/build.sh --os=${OS} --release"
+                                // sh "./deploy/build.sh --os=${OS} --release"
                             }
                             if (env.OS == "ubuntu18") {
                                 stage("${OS} Test") {
                                     echo "Testing..."
                                 }   
                             }
+                            if (env.BRANCH_NAME == "alpha" || env.BRANCH_NAME == "stable") {
+                                stage("${OS} Publish") {
+                                    echo "Publishing ${BRANCH_NAME}..."
+                                }
+                            }
                         }
                     }
                 ])
-            }
-        }
-        script {
-            if (env.BRANCH_NAME == "alpha" || env.BRANCH_NAME == "stable") {
-                stage("${BRANCH_NAME} Publish") {
-                    echo "Publishing..."
-                }
             }
         }
     }
