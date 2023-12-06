@@ -7,6 +7,8 @@ pipeline {
     stages {
         stage('BuildAndTest') {
             steps {
+                cleanWs()
+                
                 dynamicMatrix([
                     failFast: false,
                     axes: [
