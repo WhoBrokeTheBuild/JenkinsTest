@@ -68,8 +68,11 @@ pipeline {
         }
         stage('Publish') {
             when {
-                expression {
-                    return env.BRANCH_NAME == "alpha" || env.BRANCH_NAME == "stable";
+                anyOf {
+                    {
+                        branch 'alpha';
+                        branch 'stable';
+                    }
                 }
             }
             steps {
