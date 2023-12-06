@@ -47,6 +47,13 @@ pipeline {
                 ])
             }
         }
+        script {
+            if (env.BRANCH_NAME == "alpha" || env.BRANCH_NAME == "stable") {
+                stage("${BRANCH_NAME} Publish") {
+                    echo "Publishing..."
+                }
+            }
+        }
     }
 }
 
