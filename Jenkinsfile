@@ -8,6 +8,7 @@ pipeline {
         stage('BuildAndTest') {
             steps {
                 cleanWs()
+                sh 'printenv'
 
                 dynamicMatrix([
                     failFast: false,
