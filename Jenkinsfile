@@ -19,15 +19,16 @@ pipeline {
     stages {
         stage('Setup') {
             steps {
+                sh 'printenv'
+                
                 script {
                     if (!AdminList.contains(env.CHANGE_AUTHOR)) {
                         currentBuild.result = 'ABORTED'
                         error 'This user does not have permission to build PRs'
                     }
                 }
-                
+
                 cleanWs()
-                sh 'printenv'
             }
         }
         stage('BuildAndTest') {
