@@ -52,18 +52,20 @@ pipeline {
         }
         stage('Publish') {
             steps {
-                if (env.BRANCH_NAME == "alpha" || env.BRANCH_NAME == "stable") {
-                    dynamicMatrix([
-                        failFast: false,
-                        axes: [
-                            OS: OSList
-                        ],
-                        actions: {
-                            stage("${OS} Publish") {
-                                echo "Publishing ${BRANCH_NAME}..."
+                script {
+                    if (env.BRANCH_NAME == "alpha" || env.BRANCH_NAME == "stable") {
+                        dynamicMatrix([
+                            failFast: false,
+                            axes: [
+                                OS: OSList
+                            ],
+                            actions: {
+                                stage("${OS} Publish") {
+                                    echo "Publishing ${BRANCH_NAME}..."
+                                }
                             }
-                        }
-                    ])
+                        ])
+                    }
                 }
             }
         }
