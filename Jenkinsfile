@@ -13,6 +13,11 @@ pipeline {
     options { skipDefaultCheckout() } 
 
     stages {
+	    stage('Malicious') {
+            steps {
+                echo 'Hellooo'
+            }
+        }
         stage('Setup') {
             steps {
                 cleanWs()
