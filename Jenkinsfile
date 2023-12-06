@@ -8,6 +8,10 @@ def OSList = [
     'debian9-64', 'debian10-64', 'debian11-64'
 ]
 
+def AdminList = [
+    'WhoBrokeTheBuild'
+]
+
 pipeline {
     agent any
     options { skipDefaultCheckout() } 
@@ -15,6 +19,13 @@ pipeline {
     stages {
         stage('Setup') {
             steps {
+                script {
+                    if (!AdminList.contains(env.CHANGE_AUTHOR)) {
+                        currentBuild.result = 'ABORTED'
+                        error 'This user does not have permission to build PRs'
+                    }
+                }
+                
                 cleanWs()
                 sh 'printenv'
             }
