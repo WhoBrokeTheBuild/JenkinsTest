@@ -1,5 +1,13 @@
 @Library('camunda-community') _
 
+def OSList = [
+    'windows',
+    'ubuntu18', 'ubuntu20', 'ubuntu22',
+    'rhel7', 'rhel8', 'rhel9',
+    // 'alpine3.9-armhf', 'alpine3.9-x86_64', 'alpine3.9-x86',
+    'debian9-64', 'debian10-64', 'debian11-64'
+]
+
 pipeline {
     agent any
     options { skipDefaultCheckout() } 
@@ -13,13 +21,7 @@ pipeline {
                 dynamicMatrix([
                     failFast: false,
                     axes: [
-                        OS: [
-                            'windows',
-                            'ubuntu18', 'ubuntu20', 'ubuntu22',
-                            'rhel7', 'rhel8', 'rhel9',
-                            // 'alpine3.9-armhf', 'alpine3.9-x86_64', 'alpine3.9-x86',
-                            'debian9-64', 'debian10-64', 'debian11-64'
-                        ]
+                        OS: OSList
                     ],
                     actions: {
                         
@@ -37,6 +39,7 @@ pipeline {
                                 
                                 // sh "./deploy/build.sh --os=${OS} --release"
                             }
+                            // archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true 
                             if (env.OS == "ubuntu18") {
                                 stage("${OS} Test") {
                                     echo "Testing..."
