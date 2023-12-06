@@ -8,7 +8,7 @@ pipeline {
         stage('BuildAndTest') {
             steps {
                 cleanWs()
-                
+
                 dynamicMatrix([
                     failFast: false,
                     axes: [
@@ -16,8 +16,7 @@ pipeline {
                             'windows',
                             'ubuntu18', 'ubuntu20', 'ubuntu22',
                             'rhel7', 'rhel8', 'rhel9',
-                            // TODO: docker run --rm --privileged multiarch/qemu-user-static:register --reset;
-                            'alpine3.9-armhf', 'alpine3.9-x86_64', 'alpine3.9-x86',
+                            // 'alpine3.9-armhf', 'alpine3.9-x86_64', 'alpine3.9-x86',
                             'debian9-64', 'debian10-64', 'debian11-64'
                         ]
                     ],
@@ -37,9 +36,11 @@ pipeline {
                                 
                                 sh "./deploy/build.sh --os=${OS} --release"
                             }
-                            // stage("${OS} Test") {
-                            //     echo "Testing..."
-                            // }
+                            if (env.OS == "ubuntu18") {
+                                stage("${OS} Test") {
+                                    echo "Testing..."
+                                }   
+                            }
                         }
                     }
                 ])
