@@ -20,9 +20,10 @@ pipeline {
         stage('Setup') {
             steps {
                 sh 'printenv'
-                
+
                 script {
-                    if (!AdminList.contains(env.CHANGE_AUTHOR)) {
+                    // This is safe because untrusted PRs will use Jenkinsfile from the target branch
+                    if (env.BRANCH_NAME.startsWith('PR-') && !AdminList.contains(env.CHANGE_AUTHOR)) {
                         currentBuild.result = 'ABORTED'
                         error 'This user does not have permission to build PRs'
                     }
