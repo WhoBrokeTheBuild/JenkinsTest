@@ -14,6 +14,7 @@ pipeline {
                             'windows',
                             'ubuntu18', 'ubuntu20', 'ubuntu22',
                             'rhel7', 'rhel8', 'rhel9',
+                            // TODO: docker run --rm --privileged multiarch/qemu-user-static:register --reset;
                             'alpine3.9-armhf', 'alpine3.9-x86_64', 'alpine3.9-x86',
                             'debian9-64', 'debian10-64', 'debian11-64'
                         ]
@@ -28,6 +29,10 @@ pipeline {
                                 sh "./deploy/build.sh --os=bootstrap"
                             }
                             stage("${OS} Build") {
+                                if (env.OS.endsWith("armhf")) {
+                                    sh "docker run --rm --privileged multiarch/qemu-user-static:register --reset"
+                                }
+                                
                                 sh "./deploy/build.sh --os=${OS} --release"
                             }
                             // stage("${OS} Test") {
