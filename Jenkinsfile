@@ -45,14 +45,26 @@ pipeline {
                                     echo "Testing..."
                                 }   
                             }
-                            if (env.BRANCH_NAME == "alpha" || env.BRANCH_NAME == "stable") {
-                                stage("${OS} Publish") {
-                                    echo "Publishing ${BRANCH_NAME}..."
-                                }
-                            }
                         }
                     }
                 ])
+            }
+        }
+        stage('Publish') {
+            steps {
+                if (env.BRANCH_NAME == "alpha" || env.BRANCH_NAME == "stable") {
+                    dynamicMatrix([
+                        failFast: false,
+                        axes: [
+                            OS: OSList
+                        ],
+                        actions: {
+                            stage("${OS} Publish") {
+                                echo "Publishing ${BRANCH_NAME}..."
+                            }
+                        }
+                    ])
+                }
             }
         }
     }
