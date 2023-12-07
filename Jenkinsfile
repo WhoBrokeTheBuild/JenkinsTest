@@ -78,10 +78,10 @@ pipeline {
                                     ]) {
                                         // TODO: Improve
                                         MDSPLUS_DIR = sh(
-                                            script: "dirname \$(find ${WORKSPACE}/build -name 'setup.sh)",
+                                            script: "dirname \$(find ${WORKSPACE}/build -name 'setup.sh')",
                                             returnStdout: true
                                         ).trim()
-                                        
+
                                         sh "printenv"
                                         sh ". \$MDSPLUS_DIR/setup.sh; python3 ./idl/testing/run_tests.py"
                                     }
