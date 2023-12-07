@@ -66,6 +66,12 @@ pipeline {
 
                             if (env.OS == "ubuntu22") {
                                 stage("Test IDL/MATLAB") {
+                                    // TODO: Improve
+                                    MDSPLUS_DIR = sh(
+                                        script: "dirname \$(find ${WORKSPACE}/build -name 'setup.sh')",
+                                        returnStdout: true
+                                    ).trim()
+
                                     withEnv([
                                         "TEST_MDSIP_SERVER=alcdaq6",
                                         "TEST_TREE=cmod",
@@ -75,13 +81,8 @@ pipeline {
                                         "TEST_NODE2=TSTART",
                                         "TEST_NODE2_VALUE=-4.00000",
                                         "TEST_DB_NAME=logbook"
+                                        "MDSPLUS_DIR=${MDSPLUS_DIR}"
                                     ]) {
-                                        // TODO: Improve
-                                        MDSPLUS_DIR = sh(
-                                            script: "dirname \$(find ${WORKSPACE}/build -name 'setup.sh')",
-                                            returnStdout: true
-                                        ).trim()
-
                                         sh "printenv"
                                         sh ". \$MDSPLUS_DIR/setup.sh; python3 ./idl/testing/run_tests.py"
                                     }
