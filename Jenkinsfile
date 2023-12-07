@@ -64,8 +64,7 @@ pipeline {
 
                             if (env.OS == "ubuntu22") {
                                 stage("Test IDL/MATLAB") {
-                                    echo "Testing..."
-                                    // sh "false"
+                                    sh "python3 ./idl/run_tests.py"
                                 }   
                             }
                         }
