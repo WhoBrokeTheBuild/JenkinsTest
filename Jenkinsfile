@@ -2,7 +2,8 @@
 
 def OSList = [
     // 'windows',
-    'ubuntu18', 'ubuntu20', 'ubuntu22',
+    // 'ubuntu18', 'ubuntu20', 
+    'ubuntu22',
     // 'rhel7', 'rhel8', 'rhel9',
     // 'alpine3.9-armhf', 'alpine3.9-x86_64', 'alpine3.9-x86',
     // 'debian9-64', 'debian10-64', 'debian11-64'
@@ -64,7 +65,19 @@ pipeline {
 
                             if (env.OS == "ubuntu22") {
                                 stage("Test IDL/MATLAB") {
-                                    sh "python3 ./idl/testing/run_tests.py"
+                                    environment {
+                                        TEST_MDSIP_SERVER   = "alcdaq6"
+                                        TEST_TREE           = "cmod"
+                                        TEST_SHOT           = "1090909009"
+                                        TEST_NODE1          = "sum(\\IP)"
+                                        TEST_NODE1_VALUE    = "-6.96628e+07"
+                                        TEST_NODE2          = "TSTART"
+                                        TEST_NODE2_VALUE    = "-4.00000"
+                                        TEST_DB_NAME        = "logbook"
+                                        MDSPLUS_DIR         = "${WORKSPACE}/releasebld/buildroot/usr/local/mdsplus"
+                                    }
+                                    sh "printenv"
+                                    sh ". \$MDSPLUS_DIR/setup.sh; python3 ./idl/testing/run_tests.py"
                                 }   
                             }
                         }
