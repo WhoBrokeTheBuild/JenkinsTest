@@ -32,7 +32,7 @@ pipeline {
                     }
                 }
 
-                // cleanWs disableDeferredWipeout: true, deleteDirs: true
+                cleanWs disableDeferredWipeout: true, deleteDirs: true
             }
         }
         stage('Distributions') {
@@ -44,26 +44,25 @@ pipeline {
                     ],
                     actions: {
                         ws("${WORKSPACE}/${OS}") {
-                            // stage("${OS} Clone") {
-                            //     checkout scm;
-                            // }
-                            // stage("${OS} Bootstrap") {
-                            //     sh "./deploy/build.sh --os=bootstrap"
-                            // }
-                            // stage("${OS} Build") {
-                            //     if (env.OS.endsWith("armhf")) {
-                            //         sh "docker run --rm --privileged multiarch/qemu-user-static:register --reset"
-                            //     }
 
-                            //     // TODO: This isn't exactly right, but
-                            //     sh "./deploy/build.sh --os=${OS} --release"
-                            // }
-                            // stage("${OS} Test") {
-                            //     sh "./deploy/build.sh --os=${OS} --test --eventport=\$((4100+\${EXECUTOR_NUMBER}))"
+                            stage("${OS} Clone") {
+                                checkout scm;
+                            }
 
-                            //     // TODO: Why does this hang on windows?
-                            //     archiveArtifacts artifacts: '**/tests/*.log,**/tests/**/test-suite.tap,**/tests/**/core'
-                            // }
+                            stage("${OS} Bootstrap") {
+                                sh "./deploy/build.sh --os=bootstrap"
+
+                                if (env.OS.endsWith("armhf")) {
+                                    sh "docker run --rm --privileged multiarch/qemu-user-static:register --reset"
+                                }
+                            }
+
+                            stage("${OS} Test") {
+                                sh "./deploy/build.sh --os=${OS} --test --eventport=\$((4100+\${EXECUTOR_NUMBER}))"
+
+                                // TODO: Why does this hang on windows?
+                                archiveArtifacts artifacts: '**/tests/*.log,**/tests/**/test-suite.tap,**/tests/**/core'
+                            }
 
                             if (env.OS == "ubuntu22") {
                                 stage("Test IDL/MATLAB") {
@@ -75,13 +74,23 @@ pipeline {
                                         "TEST_NODE1_VALUE=-6.96628e+07",
                                         "TEST_NODE2=TSTART",
                                         "TEST_NODE2_VALUE=-4.00000",
-                                        "TEST_DB_NAME=logbook",
-                                        "MDSPLUS_DIR=${WORKSPACE}/releasebld/buildroot/usr/local/mdsplu"
+                                        "TEST_DB_NAME=logbook"
                                     ]) {
+                                        // TODO: Improve
+                                        MDSPLUS_DIR = sh(
+                                            script: "dirname \$(find ${WORKSPACE}/build -name 'setup.sh)",
+                                            returnStdout: true
+                                        ).trim()
+                                        
                                         sh "printenv"
                                         sh ". \$MDSPLUS_DIR/setup.sh; python3 ./idl/testing/run_tests.py"
                                     }
                                 }   
+                            }
+
+                            stage("${OS} Release") {
+                                // TODO: This isn't exactly right, but
+                                sh "./deploy/build.sh --os=${OS} --release"
                             }
                         }
                     }
