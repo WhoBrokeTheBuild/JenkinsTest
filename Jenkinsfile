@@ -78,6 +78,7 @@ pipeline {
                                         'TEST_DB_NAME = logbook',
                                         'MDSPLUS_DIR = $WORKSPACE/releasebld/buildroot/usr/local/mdsplus'
                                     ]) {
+                                        sh 'echo $TEST_MDSIP_SERVER'
                                         sh "printenv"
                                         sh ". \$MDSPLUS_DIR/setup.sh; python3 ./idl/testing/run_tests.py"
                                     }
