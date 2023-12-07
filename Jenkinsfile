@@ -71,8 +71,8 @@ pipeline {
         stage('Publish') {
             when {
                 anyOf {
-                    branch 'alpha';
-                    branch 'stable';
+                    environment name: 'JOB_BASE_NAME', value: 'alpha-release';
+                    environment name: 'JOB_BASE_NAME', value: 'stable-release';
                 }
             }
             steps {
@@ -84,7 +84,7 @@ pipeline {
                         ],
                         actions: {
                             stage("${OS} Publish") {
-                                echo "Publishing ${BRANCH_NAME}..."
+                                echo "Publishing ${JOB_BASE_NAME}..."
                             }
                         }
                     ])
