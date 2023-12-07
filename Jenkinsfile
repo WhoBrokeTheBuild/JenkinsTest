@@ -73,6 +73,7 @@ pipeline {
                                     ).trim()
 
                                     withEnv([
+                                        "PYTHONUNBUFFERED=1",
                                         "TEST_MDSIP_SERVER=alcdaq6",
                                         "TEST_TREE=cmod",
                                         "TEST_SHOT=1090909009",
