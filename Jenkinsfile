@@ -34,7 +34,7 @@ pipeline {
                 cleanWs disableDeferredWipeout: true, deleteDirs: true
             }
         }
-        stage('BuildAndTest') {
+        stage('Distributions') {
             steps {
                 dynamicMatrix([
                     failFast: false,
@@ -54,12 +54,15 @@ pipeline {
                                     sh "docker run --rm --privileged multiarch/qemu-user-static:register --reset"
                                 }
 
-                                sh "./deploy/build.sh --os=${OS} --test --release --eventport=\$((4100+${EXECUTOR_NUMBER}))"
+                                // TODO: This isn't exactly right, but
+                                sh "./deploy/build.sh --os=${OS} --release"
+                            }
+                            stage("${OS} Test") {
+                                sh "./deploy/build.sh --os=${OS} --test --release --eventport=\$((4100+\${EXECUTOR_NUMBER}))"
                                 archiveArtifacts artifacts: '**/tests/*.log,**/tests/**/test-suite.tap,**/tests/**/core'
                             }
 
-
-                            if (env.OS == "ubuntu18") {
+                            if (env.OS == "ubuntu22") {
                                 stage("Test IDL/MATLAB") {
                                     echo "Testing..."
                                     // sh "false"
