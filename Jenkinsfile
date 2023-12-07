@@ -54,9 +54,11 @@ pipeline {
                                     sh "docker run --rm --privileged multiarch/qemu-user-static:register --reset"
                                 }
 
-                                // sh "./deploy/build.sh --os=${OS} --release"
+                                sh "./deploy/build.sh --os=${OS} --test --release --eventport=$((4100+${EXECUTOR_NUMBER}))"
+                                archiveArtifacts artifacts: '**/tests/*.log,**/tests/**/test-suite.tap,**/tests/**/core'
                             }
-                            // archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true 
+
+
                             if (env.OS == "ubuntu18") {
                                 stage("Test IDL/MATLAB") {
                                     echo "Testing..."
