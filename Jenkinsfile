@@ -42,7 +42,7 @@ pipeline {
                         OS: OSList
                     ],
                     actions: {
-                        ws("${OS}") {
+                        ws("${WORKSPACE}/${OS}") {
                             stage("${OS} Clone") {
                                 checkout scm;
                             }
