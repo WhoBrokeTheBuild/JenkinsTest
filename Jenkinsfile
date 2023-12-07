@@ -22,10 +22,12 @@ pipeline {
                 sh 'printenv'
 
                 script {
-                    // This is safe because untrusted PRs will use Jenkinsfile from the target branch
-                    if (env.BRANCH_NAME.startsWith('PR-') && !AdminList.contains(env.CHANGE_AUTHOR)) {
-                        currentBuild.result = 'ABORTED'
-                        error 'This user does not have permission to build PRs'
+                    if (env.JOB_BASE_NAME != "alpha-release" && env.JOB_BASE_NAME != "stable-release") {
+                        // This is safe because untrusted PRs will use Jenkinsfile from the target branch
+                        if (env.BRANCH_NAME.startsWith('PR-') && !AdminList.contains(env.CHANGE_AUTHOR)) {
+                            currentBuild.result = 'ABORTED'
+                            error 'This user does not have permission to build PRs'
+                        }
                     }
                 }
 
