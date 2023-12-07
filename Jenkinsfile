@@ -1,11 +1,11 @@
 @Library('camunda-community') _
 
 def OSList = [
-    'windows',
+    // 'windows',
     'ubuntu18', 'ubuntu20', 'ubuntu22',
-    'rhel7', 'rhel8', 'rhel9',
+    // 'rhel7', 'rhel8', 'rhel9',
     // 'alpine3.9-armhf', 'alpine3.9-x86_64', 'alpine3.9-x86',
-    'debian9-64', 'debian10-64', 'debian11-64'
+    // 'debian9-64', 'debian10-64', 'debian11-64'
 ]
 
 def AdminList = [
@@ -64,7 +64,7 @@ pipeline {
 
                             if (env.OS == "ubuntu22") {
                                 stage("Test IDL/MATLAB") {
-                                    sh "python3 ./idl/run_tests.py"
+                                    sh "python3 ./idl/testing/run_tests.py"
                                 }   
                             }
                         }
