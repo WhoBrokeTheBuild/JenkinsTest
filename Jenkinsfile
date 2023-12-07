@@ -68,17 +68,16 @@ pipeline {
                             if (env.OS == "ubuntu22") {
                                 stage("Test IDL/MATLAB") {
                                     withEnv([
-                                        'TEST_MDSIP_SERVER = alcdaq6',
-                                        'TEST_TREE = cmod',
-                                        'TEST_SHOT = 1090909009',
-                                        'TEST_NODE1 = sum(\\IP)',
-                                        'TEST_NODE1_VALUE = -6.96628e+07',
-                                        'TEST_NODE2 = TSTART',
-                                        'TEST_NODE2_VALUE = -4.00000',
-                                        'TEST_DB_NAME = logbook',
-                                        'MDSPLUS_DIR = $WORKSPACE/releasebld/buildroot/usr/local/mdsplus'
+                                        'TEST_MDSIP_SERVER=alcdaq6',
+                                        'TEST_TREE=cmod',
+                                        'TEST_SHOT=1090909009',
+                                        'TEST_NODE1=sum(\\IP)',
+                                        'TEST_NODE1_VALUE=-6.96628e+07',
+                                        'TEST_NODE2=TSTART',
+                                        'TEST_NODE2_VALUE=-4.00000',
+                                        'TEST_DB_NAME=logbook',
+                                        'MDSPLUS_DIR=$WORKSPACE/releasebld/buildroot/usr/local/mdsplus'
                                     ]) {
-                                        sh 'echo $TEST_MDSIP_SERVER'
                                         sh "printenv"
                                         sh ". \$MDSPLUS_DIR/setup.sh; python3 ./idl/testing/run_tests.py"
                                     }
