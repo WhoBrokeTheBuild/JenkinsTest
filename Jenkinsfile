@@ -2,11 +2,11 @@
 
 def OSList = [
     // 'windows',
-    // 'ubuntu18', 'ubuntu20', 
-    'ubuntu22',
-    // 'rhel7', 'rhel8', 'rhel9',
+    'ubuntu18', 'ubuntu20', 'ubuntu22',
+    'rhel7', 'rhel8', 'rhel9',
     // 'alpine3.9-armhf', 'alpine3.9-x86_64', 'alpine3.9-x86',
-    // 'debian9-64', 'debian10-64', 'debian11-64'
+    'debian9-64', 'debian10-64', 'debian11-64',
+    'test-asan', 'test-tsan', 'test-ubsan',
 ]
 
 def AdminList = [
@@ -89,9 +89,11 @@ pipeline {
                                 }   
                             }
 
-                            stage("${OS} Release") {
-                                // TODO: This isn't exactly right, but
-                                sh "./deploy/build.sh --os=${OS} --release"
+                            if (!env.OS.startsWith('test-')) {
+                                stage("${OS} Release") {
+                                    // TODO: This isn't exactly right, but
+                                    sh "./deploy/build.sh --os=${OS} --release"
+                                }
                             }
                         }
                     }
