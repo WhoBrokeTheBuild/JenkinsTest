@@ -80,7 +80,7 @@ pipeline {
                                         "TEST_NODE1_VALUE=-6.96628e+07",
                                         "TEST_NODE2=TSTART",
                                         "TEST_NODE2_VALUE=-4.00000",
-                                        "TEST_DB_NAME=logbook"
+                                        "TEST_DB_NAME=logbook",
                                         "MDSPLUS_DIR=${MDSPLUS_DIR}"
                                     ]) {
                                         sh "printenv"
