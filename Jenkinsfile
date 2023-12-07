@@ -54,7 +54,7 @@ pipeline {
                                     sh "docker run --rm --privileged multiarch/qemu-user-static:register --reset"
                                 }
 
-                                sh "./deploy/build.sh --os=${OS} --test --release --eventport=$((4100+${EXECUTOR_NUMBER}))"
+                                sh "./deploy/build.sh --os=${OS} --test --release --eventport=\$((4100+${EXECUTOR_NUMBER}))"
                                 archiveArtifacts artifacts: '**/tests/*.log,**/tests/**/test-suite.tap,**/tests/**/core'
                             }
 
