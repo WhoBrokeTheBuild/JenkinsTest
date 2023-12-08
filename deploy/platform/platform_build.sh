@@ -46,7 +46,8 @@ rundocker() {
   VALGRIND_TOOLS="$(spacedelim $VALGRIND_TOOLS)"
   idx=0
   if [ -z "$INTERACTIVE" ]; then
-    stdio="-a stdout -a stderr"
+    # stdio="-a stdout -a stderr"
+    stdio="--detach"
     program="${DOCKER_SRCDIR}/deploy/platform/platform_docker_build.sh"
   else
     stdio="-i"
@@ -90,10 +91,21 @@ rundocker() {
       DOCKER_NETWORK=bridge
       NETWORK=
     fi
+
+    function kill_docker() {
+      docker kill $(cat ${WORKSPACE}/${OS}_docker-cid) || true
+      docker rm $(cat ${WORKSPACE}/${OS}_docker-cid) || true
+      rm -f ${WORKSPACE}/${OS}_docker-cid
+    }
+
+    trap kill_docker INT
+
     status=127
     loop_count=0
     while [ $status = 127 -a $loop_count -lt 5 ]; do
       let loop_count=$loop_count+1
+
+      kill_docker
 
       docker run --cap-add=SYS_PTRACE -t $stdio \
         --rm \
@@ -133,11 +145,11 @@ rundocker() {
         $(volume "${KEYS}" /sign_keys) \
         ${image} $program
       status=$?
-      # if [ -r ${WORKSPACE}/${OS}_docker-cid ]; then
-      #   sleep 3
-      #   docker rm $(cat ${WORKSPACE}/${OS}_docker-cid)
-      #   rm -f ${WORKSPACE}/${OS}_docker-cid
-      # fi
+
+      if [ -z "$INTERACTIVE" ]; then
+        docker logs -f $(cat ${WORKSPACE}/${OS}_docker-cid)
+      rm -f ${WORKSPACE}/${OS}_docker-cid
+      fi
     done
     if [ -z ${DOCKER_NETWORK} ]; then
       docker network rm ${OS}
