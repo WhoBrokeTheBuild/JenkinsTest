@@ -61,7 +61,10 @@ pipeline {
                             }
 
                             stage("${OS} Test") {
-                                sh "./deploy/build.sh --os=${OS} --test --eventport=\$((4100+\${EXECUTOR_NUMBER}))"
+                                try {
+                                    sh "./deploy/build.sh --os=${OS} --test --eventport=\$((4100+\${EXECUTOR_NUMBER}))"
+                                }
+
 
                                 // TODO: Why does this hang on windows?
                                 archiveArtifacts artifacts: '**/tests/*.log,**/tests/**/test-suite.tap,**/tests/**/core'
@@ -71,7 +74,7 @@ pipeline {
                                 stage("Test IDL/MATLAB") {
                                     // TODO: Improve
                                     MDSPLUS_DIR = sh(
-                                        script: "dirname \$(find ${WORKSPACE}/build -name 'setup.sh')",
+                                        script: "dirname \$(find . -name 'setup.sh')",
                                         returnStdout: true
                                     ).trim()
 
@@ -96,6 +99,12 @@ pipeline {
                                 stage("${OS} Release") {
                                     // TODO: This isn't exactly right, but
                                     sh "./deploy/build.sh --os=${OS} --release"
+                                }
+                            }
+
+                            post {
+                                aborted {
+                                    sh "docker kill \$(cat ${OS}_docker-cid)"
                                 }
                             }
                         }
