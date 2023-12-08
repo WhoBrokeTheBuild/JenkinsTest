@@ -61,10 +61,7 @@ pipeline {
                             }
 
                             stage("${OS} Test") {
-                                try {
-                                    sh "./deploy/build.sh --os=${OS} --test --eventport=\$((4100+\${EXECUTOR_NUMBER}))"
-                                }
-
+                                sh "./deploy/build.sh --os=${OS} --test --eventport=\$((4100+\${EXECUTOR_NUMBER}))"
 
                                 // TODO: Why does this hang on windows?
                                 archiveArtifacts artifacts: '**/tests/*.log,**/tests/**/test-suite.tap,**/tests/**/core'
