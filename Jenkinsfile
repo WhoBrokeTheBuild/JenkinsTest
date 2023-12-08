@@ -61,12 +61,7 @@ pipeline {
                             }
 
                             stage("${OS} Test") {
-                                try {
-                                    sh "./deploy/build.sh --os=${OS} --test --eventport=\$((4100+\${EXECUTOR_NUMBER}))"
-                                }
-                                finally {
-                                    sh "docker kill \$(cat ${OS}_docker-cid)"
-                                }
+                                sh "./deploy/build.sh --os=${OS} --test --eventport=\$((4100+\${EXECUTOR_NUMBER}))"
 
                                 // TODO: Why does this hang on windows?
                                 archiveArtifacts artifacts: '**/tests/*.log,**/tests/**/test-suite.tap,**/tests/**/core'
@@ -100,12 +95,7 @@ pipeline {
                             if (!env.OS.startsWith('test-')) {
                                 stage("${OS} Release") {
                                     // TODO: This isn't exactly right, but
-                                    try {
-                                        sh "./deploy/build.sh --os=${OS} --release"
-                                    }
-                                    finally {
-                                        sh "docker kill \$(cat ${OS}_docker-cid)"
-                                    }
+                                    sh "./deploy/build.sh --os=${OS} --release"
                                 }
                             }
                         }
