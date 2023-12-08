@@ -65,7 +65,7 @@ pipeline {
 
                                 // TODO: Why does this hang on windows?
                                 if (env.OS != "windows") {
-                                    archiveArtifacts artifacts: '**/tests/*.log,**/tests/**/test-suite.tap,**/tests/**/core'
+                                    archiveArtifacts artifacts: 'tests/**/*.log,tests/**/test-suite.tap,tests/**/core'
                                 }
                             }
 
