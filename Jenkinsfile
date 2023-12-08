@@ -15,7 +15,10 @@ def AdminList = [
 
 pipeline {
     agent any
-    options { skipDefaultCheckout() } 
+    options {
+        skipDefaultCheckout()
+        timeout(time: 1, unit: 'HOURS')
+    }
 
     stages {
         stage('Setup') {
@@ -84,8 +87,7 @@ pipeline {
                                         "TEST_DB_NAME=logbook",
                                         "MDSPLUS_DIR=${MDSPLUS_DIR}"
                                     ]) {
-                                        sh "printenv"
-                                        sh ". \$MDSPLUS_DIR/setup.sh; python3 ./idl/testing/run_tests.py"
+                                        sh ". \$MDSPLUS_DIR/setup.sh; printenv; python3 ./idl/testing/run_tests.py"
                                     }
                                 }   
                             }
