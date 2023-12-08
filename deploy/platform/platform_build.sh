@@ -94,8 +94,9 @@ rundocker() {
     loop_count=0
     while [ $status = 127 -a $loop_count -lt 5 ]; do
       let loop_count=$loop_count+1
-      docker run --cap-add=SYS_PTRACE -t $stdio \
-        --cidfile=${WORKSPACE}/${OS}_docker-cid \
+        # --cidfile=${WORKSPACE}/${OS}_docker-cid \
+      docker run --cap-add=SYS_PTRACE -it $stdio \
+        --rm \
         ${NETWORK} \
         -u $(id -u):$(id -g) --privileged -h $DISTNAME -e "srcdir=${DOCKER_SRCDIR}" \
         -e "ARCH=${arch}" \
@@ -131,11 +132,11 @@ rundocker() {
         $(volume "${KEYS}" /sign_keys) \
         ${image} $program
       status=$?
-      if [ -r ${WORKSPACE}/${OS}_docker-cid ]; then
-        sleep 3
-        docker rm $(cat ${WORKSPACE}/${OS}_docker-cid)
-        rm -f ${WORKSPACE}/${OS}_docker-cid
-      fi
+      # if [ -r ${WORKSPACE}/${OS}_docker-cid ]; then
+      #   sleep 3
+      #   docker rm $(cat ${WORKSPACE}/${OS}_docker-cid)
+      #   rm -f ${WORKSPACE}/${OS}_docker-cid
+      # fi
     done
     if [ -z ${DOCKER_NETWORK} ]; then
       docker network rm ${OS}

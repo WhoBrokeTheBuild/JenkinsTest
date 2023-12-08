@@ -1,7 +1,7 @@
 @Library('camunda-community') _
 
 def OSList = [
-    // 'windows',
+    'windows',
     'ubuntu18', 'ubuntu20', 'ubuntu22',
     'rhel7', 'rhel8', 'rhel9',
     // 'alpine3.9-armhf', 'alpine3.9-x86_64', 'alpine3.9-x86',
@@ -89,7 +89,7 @@ pipeline {
                                     ]) {
                                         sh ". \$MDSPLUS_DIR/setup.sh; printenv; python3 ./idl/testing/run_tests.py"
                                     }
-                                }   
+                                }
                             }
 
                             if (!env.OS.startsWith('test-')) {
