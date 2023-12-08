@@ -73,7 +73,7 @@ pipeline {
                                 stage("Test IDL/MATLAB") {
                                     // TODO: Improve
                                     MDSPLUS_DIR = sh(
-                                        script: "dirname \$(find . -name 'setup.sh')",
+                                        script: "dirname \$(find tests/ -name 'setup.sh')",
                                         returnStdout: true
                                     ).trim()
 
