@@ -93,6 +93,7 @@ rundocker() {
     fi
 
     function kill_docker() {
+      status=127
       if [ -r ${WORKSPACE}/${OS}_docker-cid ]; then
         docker kill $(cat ${WORKSPACE}/${OS}_docker-cid) || true
         docker rm $(cat ${WORKSPACE}/${OS}_docker-cid) || true
