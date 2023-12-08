@@ -512,10 +512,10 @@ then
 fi
 if [ -z "$NEW_WORKSPACE" ]
 then
-    # if [ -z "$WORKSPACE" ]
-    # then
+    if [ -z "$WORKSPACE" ]
+    then
        WORKSPACE=$(pwd)/build/${OS}/${BRANCH}
-    # fi
+    fi
 else
     WORKSPACE=$(realpath ${NEW_WORKSPACE})
 fi

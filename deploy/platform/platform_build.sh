@@ -94,9 +94,10 @@ rundocker() {
     loop_count=0
     while [ $status = 127 -a $loop_count -lt 5 ]; do
       let loop_count=$loop_count+1
-        # --cidfile=${WORKSPACE}/${OS}_docker-cid \
-      docker run --cap-add=SYS_PTRACE -it $stdio \
+
+      docker run --cap-add=SYS_PTRACE -t $stdio \
         --rm \
+        --cidfile=${WORKSPACE}/${OS}_docker-cid \
         ${NETWORK} \
         -u $(id -u):$(id -g) --privileged -h $DISTNAME -e "srcdir=${DOCKER_SRCDIR}" \
         -e "ARCH=${arch}" \
