@@ -93,7 +93,6 @@ rundocker() {
     fi
 
     function kill_docker() {
-      status=127
       if [ -r ${WORKSPACE}/${OS}_docker-cid ]; then
         docker kill $(cat ${WORKSPACE}/${OS}_docker-cid) || true
         docker rm $(cat ${WORKSPACE}/${OS}_docker-cid) || true
@@ -101,7 +100,12 @@ rundocker() {
       fi
     }
 
-    trap kill_docker INT
+    function abort() {
+      kill_docker
+      status=1
+    }
+
+    trap abort SIGINT
 
     status=127
     loop_count=0
