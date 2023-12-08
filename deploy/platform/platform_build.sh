@@ -93,9 +93,11 @@ rundocker() {
     fi
 
     function kill_docker() {
-      docker kill $(cat ${WORKSPACE}/${OS}_docker-cid) || true
-      docker rm $(cat ${WORKSPACE}/${OS}_docker-cid) || true
-      rm -f ${WORKSPACE}/${OS}_docker-cid
+      if [ -r ${WORKSPACE}/${OS}_docker-cid ]; then
+        docker kill $(cat ${WORKSPACE}/${OS}_docker-cid) || true
+        docker rm $(cat ${WORKSPACE}/${OS}_docker-cid) || true
+        rm -f ${WORKSPACE}/${OS}_docker-cid
+      fi
     }
 
     trap kill_docker INT
@@ -148,7 +150,6 @@ rundocker() {
 
       if [ -z "$INTERACTIVE" ]; then
         docker logs -f $(cat ${WORKSPACE}/${OS}_docker-cid)
-      rm -f ${WORKSPACE}/${OS}_docker-cid
       fi
     done
     if [ -z ${DOCKER_NETWORK} ]; then
