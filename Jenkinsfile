@@ -40,18 +40,18 @@ pipeline {
                     }
 
                     // This is safe because untrusted PRs will use Jenkinsfile from the target branch
-                    if (env.CHANGE_ID && env.BRANCH_NAME.startsWith('PR-') && !AdminList.contains(env.CHANGE_AUTHOR)) {
+                    // if (env.CHANGE_ID && env.BRANCH_NAME.startsWith('PR-') && !AdminList.contains(env.CHANGE_AUTHOR)) {
 
-                        pullRequest.createStatus(
-                            status: 'error',
-                            context: 'continuous-integration/jenkins/pr-head',
-                            description: 'This user does not have permission to build PRs',
-                            targetUrl: "${env.JOB_URL}"
-                        )
+                    //     pullRequest.createStatus(
+                    //         status: 'error',
+                    //         context: 'continuous-integration/jenkins/pr-head',
+                    //         description: 'This user does not have permission to build PRs',
+                    //         targetUrl: "${env.JOB_URL}"
+                    //     )
 
-                        currentBuild.result = 'ABORTED'
-                        error 'This user does not have permission to build PRs'
-                    }
+                    //     currentBuild.result = 'ABORTED'
+                    //     error 'This user does not have permission to build PRs'
+                    // }
                 }
 
                 cleanWs disableDeferredWipeout: true, deleteDirs: true
