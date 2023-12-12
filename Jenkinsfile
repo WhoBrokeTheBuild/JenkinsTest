@@ -19,6 +19,9 @@ pipeline {
         skipDefaultCheckout()
         timeout(time: 1, unit: 'HOURS')
     }
+    triggers {
+        issueCommentTrigger('.*retest\s+this\s+please*')
+    }
 
     stages {
         stage('Setup') {
