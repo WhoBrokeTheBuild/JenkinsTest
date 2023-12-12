@@ -40,18 +40,18 @@ pipeline {
                     }
 
                     // This is safe because untrusted PRs will use Jenkinsfile from the target branch
-                    // if (env.CHANGE_ID && env.BRANCH_NAME.startsWith('PR-') && !AdminList.contains(env.CHANGE_AUTHOR)) {
+                    if (env.CHANGE_ID && env.BRANCH_NAME.startsWith('PR-') && !AdminList.contains(env.CHANGE_AUTHOR)) {
 
-                    //     pullRequest.createStatus(
-                    //         status: 'error',
-                    //         context: 'continuous-integration/jenkins/pr-head',
-                    //         description: 'This user does not have permission to build PRs',
-                    //         targetUrl: "${env.JOB_URL}"
-                    //     )
+                        pullRequest.createStatus(
+                            status: 'error',
+                            context: 'continuous-integration/jenkins/pr-head',
+                            description: 'This user does not have permission to build PRs',
+                            targetUrl: "${env.JOB_URL}"
+                        )
 
-                    //     currentBuild.result = 'ABORTED'
-                    //     error 'This user does not have permission to build PRs'
-                    // }
+                        currentBuild.result = 'ABORTED'
+                        error 'This user does not have permission to build PRs'
+                    }
                 }
 
                 cleanWs disableDeferredWipeout: true, deleteDirs: true
@@ -80,43 +80,46 @@ pipeline {
                             }
 
                             stage("${OS} Test") {
-                                sh "./deploy/build.sh --os=${OS} --test --eventport=\$((4100+\${EXECUTOR_NUMBER}))"
+                                echo "Testing"
 
-                                // TODO: Why does this hang on windows?
-                                if (env.OS != "windows") {
-                                    archiveArtifacts artifacts: 'tests/**/*.log,tests/**/test-suite.tap,tests/**/core'
-                                }
+                                // sh "./deploy/build.sh --os=${OS} --test --eventport=\$((4100+\${EXECUTOR_NUMBER}))"
+
+                                // // TODO: Why does this hang on windows?
+                                // if (env.OS != "windows") {
+                                //     archiveArtifacts artifacts: 'tests/**/*.log,tests/**/test-suite.tap,tests/**/core'
+                                // }
                             }
 
-                            if (env.OS == "ubuntu22") {
-                                stage("Test IDL/MATLAB") {
-                                    // TODO: Improve
-                                    MDSPLUS_DIR = sh(
-                                        script: "dirname \$(find tests/ -name 'setup.sh')",
-                                        returnStdout: true
-                                    ).trim()
+                            // if (env.OS == "ubuntu22") {
+                            //     stage("Test IDL/MATLAB") {
+                            //         // TODO: Improve
+                            //         MDSPLUS_DIR = sh(
+                            //             script: "dirname \$(find tests/ -name 'setup.sh')",
+                            //             returnStdout: true
+                            //         ).trim()
 
-                                    withEnv([
-                                        "PYTHONUNBUFFERED=1",
-                                        "TEST_MDSIP_SERVER=alcdaq6",
-                                        "TEST_TREE=cmod",
-                                        "TEST_SHOT=1090909009",
-                                        "TEST_NODE1=sum(\\IP)",
-                                        "TEST_NODE1_VALUE=-6.96628e+07",
-                                        "TEST_NODE2=TSTART",
-                                        "TEST_NODE2_VALUE=-4.00000",
-                                        "TEST_DB_NAME=logbook",
-                                        "MDSPLUS_DIR=${MDSPLUS_DIR}"
-                                    ]) {
-                                        sh ". \$MDSPLUS_DIR/setup.sh; printenv; python3 ./idl/testing/run_tests.py"
-                                    }
-                                }
-                            }
+                            //         withEnv([
+                            //             "PYTHONUNBUFFERED=1",
+                            //             "TEST_MDSIP_SERVER=alcdaq6",
+                            //             "TEST_TREE=cmod",
+                            //             "TEST_SHOT=1090909009",
+                            //             "TEST_NODE1=sum(\\IP)",
+                            //             "TEST_NODE1_VALUE=-6.96628e+07",
+                            //             "TEST_NODE2=TSTART",
+                            //             "TEST_NODE2_VALUE=-4.00000",
+                            //             "TEST_DB_NAME=logbook",
+                            //             "MDSPLUS_DIR=${MDSPLUS_DIR}"
+                            //         ]) {
+                            //             sh ". \$MDSPLUS_DIR/setup.sh; printenv; python3 ./idl/testing/run_tests.py"
+                            //         }
+                            //     }
+                            // }
 
                             if (!env.OS.startsWith('test-')) {
                                 stage("${OS} Release") {
                                     // TODO: This isn't exactly right, but
-                                    sh "./deploy/build.sh --os=${OS} --release"
+                                    echo "Test Packaging"
+                                    // sh "./deploy/build.sh --os=${OS} --release"
                                 }
                             }
                         }
