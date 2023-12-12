@@ -20,7 +20,7 @@ pipeline {
         timeout(time: 1, unit: 'HOURS')
     }
     triggers {
-        issueCommentTrigger('.*retest\\s+this\\s+please*')
+        issueCommentTrigger('.*')
     }
 
     stages {
