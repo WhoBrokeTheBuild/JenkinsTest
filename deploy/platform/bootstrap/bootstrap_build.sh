@@ -7,6 +7,7 @@ cleanup() {
  then
   docker rm -f $(cat $cid)
   rm -f $cid
+  rmdir $(dirname $cid)
  fi
 }
 trap cleanup EXIT INT

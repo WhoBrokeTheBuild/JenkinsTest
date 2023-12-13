@@ -14,6 +14,11 @@ def AdminList = [
     'mwinkel-dev'
 ]
 
+def schedule = "";
+if (BRANCH_NAME == "alpha" || BRANCH_NAME == "stable") {
+    schedule = "H(3-6) 18 * * *";
+}
+
 pipeline {
     agent any
     options {
@@ -21,6 +26,7 @@ pipeline {
         timeout(time: 1, unit: 'HOURS')
     }
     triggers {
+        cron(schedule)
         issueCommentTrigger('(?i).*retest\\s+this\\s+please.*')
     }
 
@@ -88,46 +94,43 @@ pipeline {
                             }
 
                             stage("${OS} Test") {
-                                echo "Testing"
+                                sh "./deploy/build.sh --os=${OS} --test --eventport=\$((4100+\${EXECUTOR_NUMBER}))"
 
-                                // sh "./deploy/build.sh --os=${OS} --test --eventport=\$((4100+\${EXECUTOR_NUMBER}))"
-
-                                // // TODO: Why does this hang on windows?
-                                // if (env.OS != "windows") {
-                                //     archiveArtifacts artifacts: 'tests/**/*.log,tests/**/test-suite.tap,tests/**/core'
-                                // }
+                                // TODO: Why does this hang on windows?
+                                if (env.OS != "windows") {
+                                    archiveArtifacts artifacts: 'tests/**/*.log,tests/**/test-suite.tap,tests/**/core'
+                                }
                             }
 
-                            // if (env.OS == "ubuntu22") {
-                            //     stage("Test IDL/MATLAB") {
-                            //         // TODO: Improve
-                            //         MDSPLUS_DIR = sh(
-                            //             script: "dirname \$(find tests/ -name 'setup.sh')",
-                            //             returnStdout: true
-                            //         ).trim()
+                            if (env.OS == "ubuntu22") {
+                                stage("Test IDL/MATLAB") {
+                                    // TODO: Improve
+                                    MDSPLUS_DIR = sh(
+                                        script: "dirname \$(find tests/ -name 'setup.sh')",
+                                        returnStdout: true
+                                    ).trim()
 
-                            //         withEnv([
-                            //             "PYTHONUNBUFFERED=1",
-                            //             "TEST_MDSIP_SERVER=alcdaq6",
-                            //             "TEST_TREE=cmod",
-                            //             "TEST_SHOT=1090909009",
-                            //             "TEST_NODE1=sum(\\IP)",
-                            //             "TEST_NODE1_VALUE=-6.96628e+07",
-                            //             "TEST_NODE2=TSTART",
-                            //             "TEST_NODE2_VALUE=-4.00000",
-                            //             "TEST_DB_NAME=logbook",
-                            //             "MDSPLUS_DIR=${MDSPLUS_DIR}"
-                            //         ]) {
-                            //             sh ". \$MDSPLUS_DIR/setup.sh; printenv; python3 ./idl/testing/run_tests.py"
-                            //         }
-                            //     }
-                            // }
+                                    withEnv([
+                                        "PYTHONUNBUFFERED=1",
+                                        "TEST_MDSIP_SERVER=alcdaq6",
+                                        "TEST_TREE=cmod",
+                                        "TEST_SHOT=1090909009",
+                                        "TEST_NODE1=sum(\\IP)",
+                                        "TEST_NODE1_VALUE=-6.96628e+07",
+                                        "TEST_NODE2=TSTART",
+                                        "TEST_NODE2_VALUE=-4.00000",
+                                        "TEST_DB_NAME=logbook",
+                                        "MDSPLUS_DIR=${MDSPLUS_DIR}"
+                                    ]) {
+                                        sh ". \$MDSPLUS_DIR/setup.sh; printenv; python3 ./idl/testing/run_tests.py"
+                                    }
+                                }
+                            }
 
                             if (!env.OS.startsWith('test-')) {
                                 stage("${OS} Release") {
                                     // TODO: This isn't exactly right, but
-                                    echo "Test Packaging"
-                                    // sh "./deploy/build.sh --os=${OS} --release"
+                                    sh "./deploy/build.sh --os=${OS} --release"
                                 }
                             }
                         }
