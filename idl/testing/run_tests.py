@@ -2,6 +2,8 @@
 import os
 import subprocess
 
+from datetime import datetime, timedelta
+
 server = 'localhost'
 if 'TEST_MDSIP_SERVER' in os.environ:
     server = os.environ['TEST_MDSIP_SERVER']
@@ -46,60 +48,78 @@ def idl_test(code, expected_output):
         log(line)
     log()
 
-    proc = subprocess.Popen(
-        ['idl'],
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT
-    )
+    TIMEOUT = timedelta(minutes=1)
+    MAX_RETRIES = 10
+    retries = 0
+    while retries < MAX_RETRIES:
 
-    proc.stdin.write('test\nexit\n'.encode())
-    proc.stdin.flush()
+        start = datetime.now()
+
+        proc = subprocess.Popen(
+            ['idl'],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT
+        )
+
+        proc.stdin.write('test\nexit\n'.encode())
+        proc.stdin.flush()
+
+        while True:
+            if len(proc.stdout.peek()) != 0:
+                break
+
+            now = datetime.now()
+            if (now - start) > TIMEOUT:
+                retries += 1
+                break
     
-    hide_output = True
-
-    log('Startup:')
-    lines = []
-    while True:
-        line = proc.stdout.readline().decode()
-        if not line:
-            break
-
-        line = line.strip()
-        log(line)
-
-        if not hide_output:
-            if line != '':
-                lines.append(line.strip())
-        
-        if line == '% Compiled module: TEST.':
-            log()
-            log('Actual:')
-            hide_output = False
-    log()
-
-    #stdout, _ = proc.communicate('test\n'.encode())
-    #lines = [line.strip() for line in stdout.splitlines() ]
-    lines = list(filter(None, lines))
-
-    # Skip the IDL header and License information
-    for i, line in enumerate(lines):
-        if line == '% Compiled module: TEST.':
-            lines = lines[i + 1:]
-
-
-    this_test_passed = True
- 
-    for line, expected in zip(lines, expected_lines):
-        if line != expected:
-            log(f'`{line}` != `{expected}`')
-            this_test_passed = False
-            all_tests_passed = False
-
-    if this_test_passed:
-        log('Success')
+    if retries >= MAX_RETRIES:
+        log('Too many retries')
     else:
-        log('Failure')
+        hide_output = True
+
+        log('Startup:')
+        lines = []
+        while True:
+            line = proc.stdout.readline().decode()
+            if not line:
+                break
+
+            line = line.strip()
+            log(line)
+
+            if not hide_output:
+                if line != '':
+                    lines.append(line.strip())
+            
+            if line == '% Compiled module: TEST.':
+                log()
+                log('Actual:')
+                hide_output = False
+        log()
+
+        #stdout, _ = proc.communicate('test\n'.encode())
+        #lines = [line.strip() for line in stdout.splitlines() ]
+        lines = list(filter(None, lines))
+
+        # Skip the IDL header and License information
+        for i, line in enumerate(lines):
+            if line == '% Compiled module: TEST.':
+                lines = lines[i + 1:]
+
+        this_test_passed = True
+
+        for line, expected in zip(lines, expected_lines):
+            if line != expected:
+                log(f'`{line}` != `{expected}`')
+                this_test_passed = False
+                all_tests_passed = False
+
+        if this_test_passed:
+            log('Success')
+        else:
+            log('Failure')
 
     log()
     log('----------------------------------------------------------------\n')

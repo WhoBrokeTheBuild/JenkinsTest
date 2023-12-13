@@ -14,9 +14,13 @@ def AdminList = [
     'mwinkel-dev'
 ]
 
+// TODO: Change this?
 def schedule = "";
-if (BRANCH_NAME == "alpha" || BRANCH_NAME == "stable") {
+if (BRANCH_NAME == "alpha") {
     schedule = "H(3-6) 18 * * *";
+}
+if (BRANCH_NAME == "stable") {
+    schedule = "H(2-5) 18 * * *";
 }
 
 pipeline {
