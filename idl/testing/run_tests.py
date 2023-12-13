@@ -14,6 +14,12 @@ node2 = os.environ['TEST_NODE2']
 node2_value = os.environ['TEST_NODE2_VALUE']
 dbname = os.environ['TEST_DB_NAME']
 
+log_file = open('run_tests.log', 'wt')
+
+def log(text=''):
+    log_file.write(text + '\n')
+    print(text)
+
 all_tests_passed = True
 def idl_test(code, expected_output):
     global all_tests_passed
@@ -28,17 +34,17 @@ def idl_test(code, expected_output):
     expected_lines = [ line.strip() for line in expected_output.splitlines() ]
     expected_lines = list(filter(None, expected_lines))
 
-    print('Running:')
+    log('Running:')
     for line in code_lines:
         line = line.replace(server, '******')
         line = line.replace(dbname, '******')
-        print(f'IDL> {line}')
-    print()
+        log(f'IDL> {line}')
+    log()
 
-    print('Expected:')
+    log('Expected:')
     for line in expected_lines:
-        print(line)
-    print()
+        log(line)
+    log()
 
     proc = subprocess.Popen(
         ['idl'],
@@ -52,7 +58,7 @@ def idl_test(code, expected_output):
     
     hide_output = True
 
-    print('Actual:')
+    log('Startup:')
     lines = []
     while True:
         line = proc.stdout.readline().decode()
@@ -60,15 +66,17 @@ def idl_test(code, expected_output):
             break
 
         line = line.strip()
+        log(line)
 
         if not hide_output:
-            print(line)
             if line != '':
                 lines.append(line.strip())
         
         if line == '% Compiled module: TEST.':
+            log()
+            log('Actual:')
             hide_output = False
-    print()
+    log()
 
     #stdout, _ = proc.communicate('test\n'.encode())
     #lines = [line.strip() for line in stdout.splitlines() ]
@@ -84,18 +92,18 @@ def idl_test(code, expected_output):
  
     for line, expected in zip(lines, expected_lines):
         if line != expected:
-            print(f'`{line}` != `{expected}`')
+            log(f'`{line}` != `{expected}`')
             this_test_passed = False
             all_tests_passed = False
 
     if this_test_passed:
-        print('Success')
+        log('Success')
     else:
-        print('Failure')
+        log('Failure')
 
-    print()
-    print('----------------------------------------------------------------\n')
-    print()
+    log()
+    log('----------------------------------------------------------------\n')
+    log()
 
 
 # Tree open / read / close
