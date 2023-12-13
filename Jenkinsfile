@@ -29,29 +29,42 @@ pipeline {
                 sh 'printenv'
 
                 script {
-                    def triggerCause = currentBuild.rawBuild.getCause(org.jenkinsci.plugins.pipeline.github.trigger.IssueCommentCause)
+                    // def triggerCause = currentBuild.rawBuild.getCause(org.jenkinsci.plugins.pipeline.github.trigger.IssueCommentCause)
 
-                    if (triggerCause) {
-                        echo("Build was started by ${triggerCause.userLogin}, who wrote: " +
-                            "\"${triggerCause.comment}\", which matches the " +
-                            "\"${triggerCause.triggerPattern}\" trigger pattern.")
-                    } else {
-                        echo('Build was not started by a trigger')
-                    }
+                    // if (triggerCause) {
+                    //     echo("Build was started by ${triggerCause.userLogin}, who wrote: " +
+                    //         "\"${triggerCause.comment}\", which matches the " +
+                    //         "\"${triggerCause.triggerPattern}\" trigger pattern.")
+                    // } else {
+                    //     echo('Build was not started by a trigger')
+                    // }
 
                     // This is safe because untrusted PRs will use Jenkinsfile from the target branch
-                    if (env.CHANGE_ID && env.BRANCH_NAME.startsWith('PR-') && !AdminList.contains(env.CHANGE_AUTHOR)) {
-
-                        pullRequest.createStatus(
-                            status: 'error',
-                            context: 'continuous-integration/jenkins/pr-head',
-                            description: 'This user does not have permission to build PRs',
-                            targetUrl: "${env.JOB_URL}"
-                        )
-
-                        currentBuild.result = 'ABORTED'
-                        error 'This user does not have permission to build PRs'
+                    if (env.CHANGE_ID) { // is PR
+                        if (env.GITHUB_COMMENT_AUTHOR) {
+                            if (!AdminList.contains(env.GITHUB_COMMENT_AUTHOR)) {
+                                currentBuild.result = 'ABORTED'
+                                error 'This user cannot use "retest this please"'
+                            }
+                        }
+                        else if (!AdminList.contains(env.CHANGE_AUTHOR)) {
+                            currentBuild.result = 'ABORTED'
+                            error 'This user does not have permission to build PRs'
+                        }
                     }
+
+                    // if (&& env.BRANCH_NAME.startsWith('PR-') && !AdminList.contains(env.CHANGE_AUTHOR)) {
+
+                    //     pullRequest.createStatus(
+                    //         status: 'error',
+                    //         context: 'continuous-integration/jenkins/pr-head',
+                    //         description: 'This user does not have permission to build PRs',
+                    //         targetUrl: "${env.JOB_URL}"
+                    //     )
+
+                    //     currentBuild.result = 'ABORTED'
+                    //     error 'This user does not have permission to build PRs'
+                    // }
                 }
 
                 cleanWs disableDeferredWipeout: true, deleteDirs: true
