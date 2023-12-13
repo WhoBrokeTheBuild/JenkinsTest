@@ -10,7 +10,8 @@ def OSList = [
 ]
 
 def AdminList = [
-    'WhoBrokeTheBuild'
+    'WhoBrokeTheBuild',
+    'mwinkel-dev'
 ]
 
 pipeline {
