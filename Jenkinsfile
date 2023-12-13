@@ -47,6 +47,9 @@ pipeline {
                                 currentBuild.result = 'ABORTED'
                                 error 'This user cannot use "retest this please"'
                             }
+                            else {
+                                echo("Build was started by ${GITHUB_COMMENT_AUTHOR}, who wrote: \"${GITHUB_COMMENT}\", which matches the trigger pattern.")
+                            }
                         }
                         else if (!AdminList.contains(env.CHANGE_AUTHOR)) {
                             currentBuild.result = 'ABORTED'
