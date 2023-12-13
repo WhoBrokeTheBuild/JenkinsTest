@@ -14,6 +14,11 @@ def AdminList = [
     'mwinkel-dev'
 ]
 
+def schedule = "";
+if (BRANCH_NAME == "alpha" || BRANCH_NAME == "stable") {
+    schedule = "H(3-6) 18 * * *";
+}
+
 pipeline {
     agent any
     options {
@@ -21,6 +26,7 @@ pipeline {
         timeout(time: 1, unit: 'HOURS')
     }
     triggers {
+        cron(schedule)
         issueCommentTrigger('(?i).*retest\\s+this\\s+please.*')
     }
 
