@@ -30,15 +30,6 @@ pipeline {
                 sh 'printenv'
 
                 script {
-                    // def triggerCause = currentBuild.rawBuild.getCause(org.jenkinsci.plugins.pipeline.github.trigger.IssueCommentCause)
-
-                    // if (triggerCause) {
-                    //     echo("Build was started by ${triggerCause.userLogin}, who wrote: " +
-                    //         "\"${triggerCause.comment}\", which matches the " +
-                    //         "\"${triggerCause.triggerPattern}\" trigger pattern.")
-                    // } else {
-                    //     echo('Build was not started by a trigger')
-                    // }
 
                     // This is safe because untrusted PRs will use Jenkinsfile from the target branch
                     if (env.CHANGE_ID) { // is PR
