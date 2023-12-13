@@ -71,6 +71,8 @@ def idl_test(code, expected_output):
 
             now = datetime.now()
             if (now - start) > TIMEOUT:
+                print('IDL timed out, retrying...')
+                proc.kill()
                 retries += 1
                 break
     
