@@ -161,8 +161,11 @@ pipeline {
                             OS: OSList
                         ],
                         actions: {
-                            stage("${OS} Publish") {
-                                echo "Publishing ${BRANCH_NAME}..."
+                            ws("${WORKSPACE}/${OS}") {
+                                stage("${OS} Publish") {
+                                    sh 'python3 deploy/get_new_version.py'
+                                    echo "Publishing ${BRANCH_NAME}..."
+                                }        
                             }
                         }
                     ])
