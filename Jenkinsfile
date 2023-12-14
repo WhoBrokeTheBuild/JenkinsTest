@@ -17,12 +17,13 @@ def AdminList = [
 // TODO: Change this?
 def schedule = "";
 if (BRANCH_NAME == "alpha") {
-    // schedule = "H(3-6) 18 * * *";
-    schedule = "*/5 * * * *";
+    schedule = "H(3-6) 18 * * *";
 }
 if (BRANCH_NAME == "stable") {
     schedule = "H(2-5) 18 * * *";
 }
+
+def triggerCause = currentBuild.getBuildCauses()[0];
 
 pipeline {
     agent any
@@ -42,8 +43,6 @@ pipeline {
                 echo schedule
 
                 script {
-
-                    println "CAUSE ${currentBuild.getBuildCauses()[0]._class}"
 
                     // This is safe because untrusted PRs will use Jenkinsfile from the target branch
                     if (env.CHANGE_ID) { // is PR
@@ -148,10 +147,13 @@ pipeline {
         }
         stage('Publish') {
             when {
-                anyOf {
-                    environment name: 'JOB_BASE_NAME', value: 'alpha-release';
-                    environment name: 'JOB_BASE_NAME', value: 'stable-release';
+                expression {
+                    return triggerCause == hudson.triggers.TimerTrigger$TimerTriggerCause;
                 }
+                // anyOf {
+                //     environment name: 'JOB_BASE_NAME', value: 'alpha-release';
+                //     environment name: 'JOB_BASE_NAME', value: 'stable-release';
+                // }
             }
             steps {
                 script {
@@ -162,7 +164,7 @@ pipeline {
                         ],
                         actions: {
                             stage("${OS} Publish") {
-                                echo "Publishing ${JOB_BASE_NAME}..."
+                                echo "Publishing ${BRANCH_NAME}..."
                             }
                         }
                     ])
