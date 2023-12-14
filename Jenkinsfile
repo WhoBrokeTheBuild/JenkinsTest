@@ -89,9 +89,17 @@ pipeline {
                                 checkout scm;
                             }
 
+                            if (!env.CHANGE_ID) {
+                                stage("${OS} Calculate Version") {
+                                    NEW_VERSION = sh(
+                                        script: "python3 deploy/get_new_version.py",
+                                        returnStdout: true
+                                    ).trim()
+                                }
+                            }
+
                             stage("${OS} Bootstrap") {
                                 sh "./deploy/build.sh --os=bootstrap"
-                                sh "python3 deploy/get_new_version.py"
 
                                 if (env.OS.endsWith("armhf")) {
                                     sh "docker run --rm --privileged multiarch/qemu-user-static:register --reset"
@@ -135,7 +143,7 @@ pipeline {
                             if (!env.OS.startsWith('test-')) {
                                 stage("${OS} Release") {
                                     // TODO: This isn't exactly right, but
-                                    // sh "./deploy/build.sh --os=${OS} --release"
+                                    sh "./deploy/build.sh --os=${OS} --release=${NEW_VERSION}"
                                 }
                             }
                         }

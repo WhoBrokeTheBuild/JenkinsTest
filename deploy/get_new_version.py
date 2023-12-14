@@ -5,7 +5,7 @@ import shutil
 git_executable = shutil.which('git')
 
 def git(command):
-    print(f'git {command}')
+    # print(f'git {command}')
     proc = subprocess.Popen(
         [ git_executable ] + command.split(),
         stdout=subprocess.PIPE,
@@ -21,7 +21,7 @@ commit_log = git(f'log {last_release_commit}..HEAD --no-merges --decorate=short 
 
 version_bump = 'SAME'
 for commit in commit_log.splitlines():
-    print(commit)
+    # print(commit)
     commit = commit.lower()
 
     if commit.startswith('feature') or commit.startswith('revert "feature'):
@@ -44,4 +44,20 @@ for commit in commit_log.splitlines():
         version_bump = 'BADCOMMIT'
         break
 
-print(version_bump)
+version_parts = last_release.split('-')
+if len(version_parts) < 4:
+    print('1.2.3')
+    exit(1)
+else:
+    major = int(version_parts[-3])
+    minor = int(version_parts[-2])
+    patch = int(version_parts[-1])
+
+if version_bump == 'MAJOR':
+    major += 1
+elif version_bump == 'MINOR':
+    minor += 1
+elif version_bump == 'PATCH':
+    patch += 1
+
+print(f'{major}.{minor}.{patch}')
