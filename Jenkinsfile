@@ -24,8 +24,6 @@ if (BRANCH_NAME == "stable") {
     schedule = "H(2-5) 18 * * *";
 }
 
-def triggerCause = currentBuild.getBuildCauses()[0]._class;
-
 pipeline {
     agent any
     options {
@@ -42,13 +40,8 @@ pipeline {
             steps {
                 sh 'printenv'
                 echo schedule
-                echo triggerCause
 
                 script {
-
-                    if (triggerCause == hudson.triggers.TimerTrigger$TimerTriggerCause) {
-                        echo "Yup"
-                    }
 
                     // This is safe because untrusted PRs will use Jenkinsfile from the target branch
                     if (env.CHANGE_ID) { // is PR
@@ -154,13 +147,12 @@ pipeline {
         stage('Publish') {
             when {
                 allOf {
-                    expression {
-                        return triggerCause == hudson.triggers.TimerTrigger$TimerTriggerCause;
-                    }
                     anyOf {
                         environment name: 'BRANCH_NAME', value: 'alpha';
                         environment name: 'BRANCH_NAME', value: 'stable';
                     }
+
+                    triggeredBy: 'TimerTrigger'
                 }
             }
             steps {
