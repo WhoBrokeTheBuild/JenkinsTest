@@ -14,14 +14,12 @@ def AdminList = [
     'mwinkel-dev'
 ]
 
-// TODO: Change this?
 def schedule = "";
 if (BRANCH_NAME == "alpha") {
-    // schedule = "H(3-6) 18 * * *";
-    schedule = "*/5 * * * *";
+    schedule = "0 18 * * *";
 }
 if (BRANCH_NAME == "stable") {
-    schedule = "H(2-5) 18 * * *";
+    schedule = "0 19 * * *";
 }
 
 pipeline {
@@ -148,8 +146,8 @@ pipeline {
             when {
                 allOf {
                     anyOf {
-                        environment name: 'BRANCH_NAME', value: 'alpha';
-                        environment name: 'BRANCH_NAME', value: 'stable';
+                        branch 'alpha';
+                        branch 'stable';
                     }
 
                     triggeredBy 'TimerTrigger'
