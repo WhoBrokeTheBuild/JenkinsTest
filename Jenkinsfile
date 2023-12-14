@@ -24,7 +24,7 @@ if (BRANCH_NAME == "stable") {
     schedule = "H(2-5) 18 * * *";
 }
 
-def triggerCause = currentBuild.getBuildCauses()[0];
+def triggerCause = currentBuild.getBuildCauses()[0]._class;
 
 pipeline {
     agent any
