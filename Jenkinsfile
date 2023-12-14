@@ -91,6 +91,7 @@ pipeline {
 
                             stage("${OS} Bootstrap") {
                                 sh "./deploy/build.sh --os=bootstrap"
+                                sh "python3 deploy/get_new_version.py"
 
                                 if (env.OS.endsWith("armhf")) {
                                     sh "docker run --rm --privileged multiarch/qemu-user-static:register --reset"
@@ -163,7 +164,6 @@ pipeline {
                         actions: {
                             ws("${WORKSPACE}/${OS}") {
                                 stage("${OS} Publish") {
-                                    sh 'python3 deploy/get_new_version.py'
                                     echo "Publishing ${BRANCH_NAME}..."
                                 }        
                             }
