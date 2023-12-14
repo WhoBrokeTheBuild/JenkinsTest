@@ -42,8 +42,13 @@ pipeline {
             steps {
                 sh 'printenv'
                 echo schedule
+                echo triggerCause
 
                 script {
+
+                    if (triggerCause == hudson.triggers.TimerTrigger$TimerTriggerCause) {
+                        echo "Yup"
+                    }
 
                     // This is safe because untrusted PRs will use Jenkinsfile from the target branch
                     if (env.CHANGE_ID) { // is PR
