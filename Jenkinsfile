@@ -143,7 +143,7 @@ pipeline {
                             if (!env.OS.startsWith('test-')) {
                                 stage("${OS} Release") {
                                     // TODO: This isn't exactly right, but
-                                    sh "./deploy/build.sh --os=${OS} --release=${NEW_VERSION}"
+                                    sh "./deploy/build.sh --os=${OS} --branch=${BRANCH_NAME} --release=${NEW_VERSION}"
                                 }
                             }
                         }
