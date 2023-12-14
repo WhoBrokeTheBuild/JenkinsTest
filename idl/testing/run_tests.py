@@ -48,8 +48,8 @@ def idl_test(code, expected_output):
         log(line)
     log()
 
-    TIMEOUT = timedelta(seconds=30)
-    MAX_RETRIES = 10
+    TIMEOUT = timedelta(seconds=10)
+    MAX_RETRIES = 6
     retries = 0
     waiting = True
     while waiting and retries < MAX_RETRIES:

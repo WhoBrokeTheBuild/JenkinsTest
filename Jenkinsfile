@@ -38,8 +38,11 @@ pipeline {
         stage('Setup') {
             steps {
                 sh 'printenv'
+                echo schedule
 
                 script {
+
+                    println "CAUSE ${currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause).properties}"
 
                     // This is safe because untrusted PRs will use Jenkinsfile from the target branch
                     if (env.CHANGE_ID) { // is PR
