@@ -21,22 +21,23 @@ commit_log = git(f'log {last_release_commit}..HEAD --no-merges --decorate=short 
 
 version_bump = 'SAME'
 for commit in commit_log.splitlines():
+    print(commit)
     commit = commit.lower()
 
-    if commit.startswith('Feature') or commit.startswith('Revert "Feature'):
+    if commit.startswith('feature') or commit.startswith('revert "feature'):
         version_bump = 'MINOR'
 
-    elif commit.startswith('Fix') or commit.startswith('Revert "Fix'):
+    elif commit.startswith('fix') or commit.startswith('revert "fix'):
         if version_bump != 'MINOR':
             version_bump = 'PATCH'
     
-    elif commit.startswith('Tests') or commit.startswith('Revert "Tests'):
+    elif commit.startswith('tests') or commit.startswith('revert "tests'):
         pass
 
-    elif commit.startswith('Build') or commit.startswith('Revert "Build'):
+    elif commit.startswith('build') or commit.startswith('revert "build'):
         pass
 
-    elif commit.startswith('Docs') or commit.startswith('Revert "Docs'):
+    elif commit.startswith('docs') or commit.startswith('revert "docs'):
         pass
 
     else:
