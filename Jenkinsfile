@@ -17,7 +17,8 @@ def AdminList = [
 // TODO: Change this?
 def schedule = "";
 if (BRANCH_NAME == "alpha") {
-    schedule = "H(3-6) 18 * * *";
+    // schedule = "H(3-6) 18 * * *";
+    schedule = "*/5 * * * *";
 }
 if (BRANCH_NAME == "stable") {
     schedule = "H(2-5) 18 * * *";
@@ -42,7 +43,7 @@ pipeline {
 
                 script {
 
-                    println "CAUSE ${currentBuild.getBuildCauses()}"
+                    println "CAUSE ${currentBuild.getBuildCauses()[0]._class}"
 
                     // This is safe because untrusted PRs will use Jenkinsfile from the target branch
                     if (env.CHANGE_ID) { // is PR
