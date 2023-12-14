@@ -48,10 +48,11 @@ def idl_test(code, expected_output):
         log(line)
     log()
 
-    TIMEOUT = timedelta(minutes=1)
+    TIMEOUT = timedelta(seconds=30)
     MAX_RETRIES = 10
     retries = 0
-    while retries < MAX_RETRIES:
+    waiting = True
+    while waiting and retries < MAX_RETRIES:
 
         start = datetime.now()
 
@@ -67,6 +68,7 @@ def idl_test(code, expected_output):
 
         while True:
             if len(proc.stdout.peek()) != 0:
+                waiting = False
                 break
 
             now = datetime.now()
