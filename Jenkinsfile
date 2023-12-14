@@ -152,7 +152,7 @@ pipeline {
                         environment name: 'BRANCH_NAME', value: 'stable';
                     }
 
-                    triggeredBy: 'TimerTrigger'
+                    triggeredBy 'TimerTrigger'
                 }
             }
             steps {
