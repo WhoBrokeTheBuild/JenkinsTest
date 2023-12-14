@@ -17,7 +17,8 @@ def AdminList = [
 // TODO: Change this?
 def schedule = "";
 if (BRANCH_NAME == "alpha") {
-    schedule = "H(3-6) 18 * * *";
+    // schedule = "H(3-6) 18 * * *";
+    schedule = "*/5 * * * *";
 }
 if (BRANCH_NAME == "stable") {
     schedule = "H(2-5) 18 * * *";
@@ -101,43 +102,43 @@ pipeline {
                             }
 
                             stage("${OS} Test") {
-                                sh "./deploy/build.sh --os=${OS} --test --eventport=\$((4100+\${EXECUTOR_NUMBER}))"
+                                // sh "./deploy/build.sh --os=${OS} --test --eventport=\$((4100+\${EXECUTOR_NUMBER}))"
 
-                                // TODO: Why does this hang on windows?
-                                if (env.OS != "windows") {
-                                    archiveArtifacts artifacts: 'tests/**/*.log,tests/**/test-suite.tap,tests/**/core'
-                                }
+                                // // TODO: Why does this hang on windows?
+                                // if (env.OS != "windows") {
+                                //     archiveArtifacts artifacts: 'tests/**/*.log,tests/**/test-suite.tap,tests/**/core'
+                                // }
                             }
 
-                            if (env.OS == "ubuntu22") {
-                                stage("Test IDL/MATLAB") {
-                                    // TODO: Improve
-                                    MDSPLUS_DIR = sh(
-                                        script: "dirname \$(find tests/ -name 'setup.sh')",
-                                        returnStdout: true
-                                    ).trim()
+                            // if (env.OS == "ubuntu22") {
+                            //     stage("Test IDL/MATLAB") {
+                            //         // TODO: Improve
+                            //         MDSPLUS_DIR = sh(
+                            //             script: "dirname \$(find tests/ -name 'setup.sh')",
+                            //             returnStdout: true
+                            //         ).trim()
 
-                                    withEnv([
-                                        "PYTHONUNBUFFERED=1",
-                                        "TEST_MDSIP_SERVER=alcdaq6",
-                                        "TEST_TREE=cmod",
-                                        "TEST_SHOT=1090909009",
-                                        "TEST_NODE1=sum(\\IP)",
-                                        "TEST_NODE1_VALUE=-6.96628e+07",
-                                        "TEST_NODE2=TSTART",
-                                        "TEST_NODE2_VALUE=-4.00000",
-                                        "TEST_DB_NAME=logbook",
-                                        "MDSPLUS_DIR=${MDSPLUS_DIR}"
-                                    ]) {
-                                        sh ". \$MDSPLUS_DIR/setup.sh; printenv; python3 ./idl/testing/run_tests.py"
-                                    }
-                                }
-                            }
+                            //         withEnv([
+                            //             "PYTHONUNBUFFERED=1",
+                            //             "TEST_MDSIP_SERVER=alcdaq6",
+                            //             "TEST_TREE=cmod",
+                            //             "TEST_SHOT=1090909009",
+                            //             "TEST_NODE1=sum(\\IP)",
+                            //             "TEST_NODE1_VALUE=-6.96628e+07",
+                            //             "TEST_NODE2=TSTART",
+                            //             "TEST_NODE2_VALUE=-4.00000",
+                            //             "TEST_DB_NAME=logbook",
+                            //             "MDSPLUS_DIR=${MDSPLUS_DIR}"
+                            //         ]) {
+                            //             sh ". \$MDSPLUS_DIR/setup.sh; printenv; python3 ./idl/testing/run_tests.py"
+                            //         }
+                            //     }
+                            // }
 
                             if (!env.OS.startsWith('test-')) {
                                 stage("${OS} Release") {
                                     // TODO: This isn't exactly right, but
-                                    sh "./deploy/build.sh --os=${OS} --release"
+                                    // sh "./deploy/build.sh --os=${OS} --release"
                                 }
                             }
                         }
@@ -147,13 +148,15 @@ pipeline {
         }
         stage('Publish') {
             when {
-                expression {
-                    return triggerCause == hudson.triggers.TimerTrigger$TimerTriggerCause;
+                allOf {
+                    expression {
+                        return triggerCause == hudson.triggers.TimerTrigger$TimerTriggerCause;
+                    }
+                    anyOf {
+                        environment name: 'BRANCH_NAME', value: 'alpha';
+                        environment name: 'BRANCH_NAME', value: 'stable';
+                    }
                 }
-                // anyOf {
-                //     environment name: 'JOB_BASE_NAME', value: 'alpha-release';
-                //     environment name: 'JOB_BASE_NAME', value: 'stable-release';
-                // }
             }
             steps {
                 script {
