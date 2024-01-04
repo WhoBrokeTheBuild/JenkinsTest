@@ -71,8 +71,9 @@ pipeline {
                     //     error 'This user does not have permission to build PRs'
                     // }
                 }
-
-                cleanWs()
+                
+                // Make sure there's nothing from previous builds
+                cleanWs(deleteDirs: true, disableDeferredWipeout: true)
             }
         }
         stage('Distributions') {
