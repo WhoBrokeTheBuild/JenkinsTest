@@ -72,7 +72,7 @@ pipeline {
                     // }
                 }
 
-                cleanWs disableDeferredWipeout: true, deleteDirs: true
+                cleanWs()
             }
         }
         stage('Distributions') {
@@ -89,17 +89,20 @@ pipeline {
                                 checkout scm;
                             }
 
-                            if (!env.CHANGE_ID) {
-                                stage("${OS} Calculate Version") {
+                            stage("${OS} Bootstrap") {
+                                sh "GIT_BRANCH=${BRANCH_NAME} ./deploy/build.sh --os=bootstrap"
+
+                                RELEASE_OPTIONS = "--release"
+                                if (!env.CHANGE_ID) {
                                     NEW_VERSION = sh(
                                         script: "python3 deploy/get_new_version.py",
                                         returnStdout: true
                                     ).trim()
-                                }
-                            }
 
-                            stage("${OS} Bootstrap") {
-                                sh "./deploy/build.sh --os=bootstrap"
+                                    echo "Calculated new version ${NEW_VERSION}"
+
+                                    RELEASE_OPTIONS = "--branch=${BRANCH_NAME} --release=${NEW_VERSION}"
+                                }
 
                                 if (env.OS.endsWith("armhf")) {
                                     sh "docker run --rm --privileged multiarch/qemu-user-static:register --reset"
@@ -143,7 +146,7 @@ pipeline {
                             if (!env.OS.startsWith('test-')) {
                                 stage("${OS} Release") {
                                     // TODO: This isn't exactly right, but
-                                    sh "./deploy/build.sh --os=${OS} --branch=${BRANCH_NAME} --release=${NEW_VERSION}"
+                                    sh "./deploy/build.sh --os=${OS} ${RELEASE_OPTIONS}"
                                 }
                             }
                         }
@@ -178,6 +181,11 @@ pipeline {
                         }
                     ])
                 }
+            }
+        }
+        post {
+            always {
+                cleanWs(deleteDirs: true, disableDeferredWipeout: true)
             }
         }
     }
