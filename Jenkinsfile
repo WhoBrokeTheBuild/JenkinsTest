@@ -183,10 +183,10 @@ pipeline {
                 }
             }
         }
-        post {
-            always {
-                cleanWs(deleteDirs: true, disableDeferredWipeout: true)
-            }
+    }
+    post {
+        always {
+            cleanWs(deleteDirs: true, disableDeferredWipeout: true)
         }
     }
 }
