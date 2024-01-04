@@ -187,7 +187,7 @@ pipeline {
     }
     post {
         always {
-            cleanWs(deleteDirs: true, disableDeferredWipeout: true)
+            cleanWs disableDeferredWipeout: true, deleteDirs: true
         }
     }
 }
