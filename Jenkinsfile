@@ -91,23 +91,26 @@ pipeline {
                             }
 
                             stage("${OS} Bootstrap") {
-                                sh "GIT_BRANCH=${BRANCH_NAME} ./deploy/build.sh --os=bootstrap"
+                                def index = OSList.indexOf(OS)
+                                print index
 
-                                RELEASE_OPTIONS = "--release"
-                                if (!env.CHANGE_ID) {
-                                    NEW_VERSION = sh(
-                                        script: "python3 deploy/get_new_version.py",
-                                        returnStdout: true
-                                    ).trim()
+                                // sh "GIT_BRANCH=${BRANCH_NAME} ./deploy/build.sh --os=bootstrap"
 
-                                    echo "Calculated new version ${NEW_VERSION}"
+                                // RELEASE_OPTIONS = "--release"
+                                // if (!env.CHANGE_ID) {
+                                //     NEW_VERSION = sh(
+                                //         script: "python3 deploy/get_new_version.py",
+                                //         returnStdout: true
+                                //     ).trim()
 
-                                    RELEASE_OPTIONS = "--branch=${BRANCH_NAME} --release=${NEW_VERSION}"
-                                }
+                                //     echo "Calculated new version ${NEW_VERSION}"
 
-                                if (env.OS.endsWith("armhf")) {
-                                    sh "docker run --rm --privileged multiarch/qemu-user-static:register --reset"
-                                }
+                                //     RELEASE_OPTIONS = "--branch=${BRANCH_NAME} --release=${NEW_VERSION}"
+                                // }
+
+                                // if (env.OS.endsWith("armhf")) {
+                                //     sh "docker run --rm --privileged multiarch/qemu-user-static:register --reset"
+                                // }
                             }
 
                             stage("${OS} Test") {
