@@ -198,9 +198,7 @@ pipeline {
         always {
             script {
                 for (OS in OSList) {
-                    ws("${WORKSPACE}/${OS}") {
-                        archiveArtifacts artifacts: "test.log"
-                    }
+                    archiveArtifacts artifacts: "${OS}/test.log"
                 }
 
             }
