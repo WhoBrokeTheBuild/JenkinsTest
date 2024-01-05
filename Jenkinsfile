@@ -91,7 +91,7 @@ pipeline {
                             }
 
                             stage("${OS} Bootstrap") {
-                                OS_INDEX = OSList.indexOf(OS)
+                                OS_INDEX = OSList.indexOf(OS) * 1000
 
                                 sh "echo ${OS_INDEX}"
 
