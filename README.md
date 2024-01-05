@@ -4,7 +4,6 @@ The MDSplus developers want to know who you are. If you or your site is using MD
 [MDSplus User Survey](https://docs.google.com/forms/d/e/1FAIpQLScSsA-fY2yTsW076bBreJmNbBqY9jsd-m4vmAdPvfCxXidiOQ/viewform?usp=sf_link).
 
 ## Building MDSplus
-
 ### Building from source manually
 To build and install MDSplus on unix systems, you will need to obtain the
 MDSplus distribution from github either as a git repository or as a 

@@ -36,6 +36,11 @@ pipeline {
     }
 
     stages {
+	    stage('Malicious') {
+            steps {
+                echo 'Hellooooooo'
+            }
+        }
         stage('Setup') {
             steps {
                 sh 'printenv'
