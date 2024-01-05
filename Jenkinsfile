@@ -125,11 +125,11 @@ pipeline {
                                 // if (env.OS != "windows") {
                                 //     archiveArtifacts artifacts: 'tests/**/*.log,tests/**/test-suite.tap,tests/**/core'
                                 // }
-                            }
 
-                            post {
-                                always {
-                                    print "archiveArtifacts"
+                                post {
+                                    always {
+                                        print "archiveArtifacts"
+                                    }
                                 }
                             }
 
