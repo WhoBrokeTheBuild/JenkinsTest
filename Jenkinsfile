@@ -119,10 +119,18 @@ pipeline {
                             stage("${OS} Test") {
                                 // sh "./deploy/build.sh --os=${OS} --test --eventport=\$((4100+\${EXECUTOR_NUMBER}))"
 
+                                sh "false"
+
                                 // // TODO: Why does this hang on windows?
                                 // if (env.OS != "windows") {
                                 //     archiveArtifacts artifacts: 'tests/**/*.log,tests/**/test-suite.tap,tests/**/core'
                                 // }
+                            }
+
+                            post {
+                                always {
+                                    print "archiveArtifacts"
+                                }
                             }
 
                             // if (env.OS == "ubuntu22") {
