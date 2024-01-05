@@ -196,12 +196,7 @@ pipeline {
     }
     post {
         always {
-            script {
-                for (OS in OSList) {
-                    archiveArtifacts artifacts: "${OS}/test.log"
-                }
-
-            }
+            archiveArtifacts artifacts: "**/test.log"
 
             cleanWs disableDeferredWipeout: true, deleteDirs: true
         }
