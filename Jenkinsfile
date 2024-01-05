@@ -119,11 +119,8 @@ pipeline {
                             stage("${OS} Test") {
                                 // sh "./deploy/build.sh --os=${OS} --test --eventport=\$((4100+\${EXECUTOR_NUMBER}))"
 
-                                catchError {
-                                    sh "false"
-                                }
-
-                                print "archiveArtifacts"
+                                sh "touch test.log"
+                                sh "false"
 
                                 // // TODO: Why does this hang on windows?
                                 // if (env.OS != "windows") {
@@ -199,6 +196,18 @@ pipeline {
     }
     post {
         always {
+            dynamicMatrix([
+                failFast: false,
+                axes: [
+                    OS: OSList
+                ],
+                actions: {
+                    ws("${WORKSPACE}/${OS}") {
+                        archiveArtifacts artifacts: "test.log"
+                    }
+                }
+            ])
+
             cleanWs disableDeferredWipeout: true, deleteDirs: true
         }
     }
