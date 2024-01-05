@@ -92,7 +92,8 @@ pipeline {
 
                             stage("${OS} Bootstrap") {
                                 def index = OSList.indexOf(OS)
-                                print index
+
+                                sh 'echo ${index}'
 
                                 // sh "GIT_BRANCH=${BRANCH_NAME} ./deploy/build.sh --os=bootstrap"
 
