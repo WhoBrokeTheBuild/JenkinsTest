@@ -196,20 +196,13 @@ pipeline {
     }
     post {
         always {
-            stage('Artifacts') {
-                step {
-                    dynamicMatrix([
-                        failFast: false,
-                        axes: [
-                            OS: OSList
-                        ],
-                        actions: {
-                            ws("${WORKSPACE}/${OS}") {
-                                archiveArtifacts artifacts: "test.log"
-                            }
-                        }
-                    ])
+            script {
+                for (OS in OSList) {
+                    ws("${WORKSPACE}/${OS}") {
+                        archiveArtifacts artifacts: "test.log"
+                    }
                 }
+
             }
 
             cleanWs disableDeferredWipeout: true, deleteDirs: true
