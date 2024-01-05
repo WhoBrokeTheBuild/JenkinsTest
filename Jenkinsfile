@@ -1,5 +1,7 @@
 @Library('camunda-community') _
 
+def MAX_CONCURRENT_TESTS = 1000;
+
 def OSList = [
     'windows',
     'ubuntu18', 'ubuntu20', 'ubuntu22',
@@ -91,7 +93,7 @@ pipeline {
                             }
 
                             stage("${OS} Bootstrap") {
-                                OS_INDEX = OSList.indexOf(OS) * 1000
+                                OS_INDEX = OSList.indexOf(OS) * MAX_CONCURRENT_TESTS
 
                                 sh "echo ${OS_INDEX}"
 
