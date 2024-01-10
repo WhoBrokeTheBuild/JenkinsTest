@@ -74,19 +74,19 @@ pipeline {
 
         stage('Distributions') {
             steps {
+                script {
+                    for (OS in OSList) {
 
-                for (OS in OSList) {
+                        ws("${WORKSPACE}/${OS}") {
 
-                    ws("${WORKSPACE}/${OS}") {
+                            stage("${OS} Clone") {
+                                checkout scm;
+                            }
 
-                        stage("${OS} Clone") {
-                            checkout scm;
                         }
 
                     }
-
                 }
-
             }
         }
 
