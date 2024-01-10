@@ -73,23 +73,25 @@ pipeline {
         }
 
         stage('Distributions') {
-            script {
-                Map tasks = [failFast: false]
+            steps {
+                script {
+                    Map tasks = [failFast: false]
 
-                for (OS in OSList) {
-                    tasks[OS] = { ->
+                    for (OS in OSList) {
+                        tasks[OS] = { ->
 
-                        ws("${WORKSPACE}/${OS}") {
+                            ws("${WORKSPACE}/${OS}") {
 
-                            stage("${OS} Clone") {
-                                checkout scm;
+                                stage("${OS} Clone") {
+                                    checkout scm;
+                                }
+
                             }
-
                         }
                     }
-                }
 
-                parallel(tasks)
+                    parallel(tasks)
+                }
             }
         }
 
