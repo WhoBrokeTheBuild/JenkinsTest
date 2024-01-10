@@ -81,11 +81,15 @@ pipeline {
                     steps {
                         ws("${WORKSPACE}/ubuntu18") {
                             stage("Clone") {
-                                checkout scm;
+                                steps {
+                                    checkout scm;
+                                }
                             }
 
                             stage("Test") {
-                                sh "touch test.log"
+                                steps {
+                                    sh "touch test.log"
+                                }
                             }
                         }
                     }
@@ -105,11 +109,15 @@ pipeline {
                     steps {
                         ws("${WORKSPACE}/ubuntu20") {
                             stage("Clone") {
-                                checkout scm;
+                                steps {
+                                    checkout scm;
+                                }
                             }
 
                             stage("Test") {
-                                sh "touch test.log"
+                                steps {
+                                    sh "touch test.log"
+                                }
                             }
                         }
                     }
@@ -129,11 +137,15 @@ pipeline {
                     steps {
                         ws("${WORKSPACE}/ubuntu22") {
                             stage("Clone") {
-                                checkout scm;
+                                steps {
+                                    checkout scm;
+                                }
                             }
 
                             stage("Test") {
-                                sh "touch test.log"
+                                steps {
+                                    sh "touch test.log"
+                                }
                             }
                         }
                     }
