@@ -97,18 +97,20 @@ pipeline {
 
                 stage("Ubuntu 20") {
                     agent any
-
-                    ws("${WORKSPACE}/ubuntu20") {
                             
                         steps {
-                            checkout scm;
+                            ws("${WORKSPACE}/ubuntu20") {
+                                checkout scm;
 
-                            sh "touch test.log"
+                                sh "touch test.log"
+                            }
                         }
 
                         post {
                             always {
-                                archiveArtifacts "test.log"
+                                ws("${WORKSPACE}/ubuntu20") {
+                                    archiveArtifacts "test.log"
+                                }
                             }
                         }
                         
