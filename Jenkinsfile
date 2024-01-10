@@ -86,6 +86,16 @@ pipeline {
                                     checkout scm;
                                 }
 
+                                stage("${OS} Test") {
+                                    sh "touch test.log"
+                                }
+
+                                post {
+                                    always {
+                                        archiveArtifacts "test.log"
+                                    }
+                                }
+
                             }
                         }
                     }
