@@ -164,7 +164,7 @@ pipeline {
             steps {
                 script {
                     parallel OSList.collectEntries {
-                        OS -> [ OS: {
+                        OS -> [ "${OS}": {
                             stage("${OS}") {
                                 ws("${WORKSPACE}/${OS}") {
 
