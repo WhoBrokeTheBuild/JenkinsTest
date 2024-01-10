@@ -181,7 +181,7 @@ pipeline {
                                     }
                                     finally {
                                         sh "ls ${WORKSPACE}/${OS}"
-                                        archiveArtifacts "${WORKSPACE}/${OS}/test.log"
+                                        archiveArtifacts "${OS}/test.log"
                                     }
                                 }
                             }
