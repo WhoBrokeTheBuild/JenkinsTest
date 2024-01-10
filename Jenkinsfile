@@ -73,7 +73,7 @@ pipeline {
         }
 
         stage('Distributions') {
-            steps {
+            parallel {
                 script {
                     for (OS in OSList) {
 
