@@ -163,11 +163,8 @@ pipeline {
 
             steps {
                 script {
-                    Map tasks = [failFast: false]
-
-                    for (def OS in OSList) {
-                        tasks[OS] = { ->
-
+                    parallel OSList.collectEntries {
+                        OS -> [ OS: {
                             stage("${OS}") {
                                 ws("${WORKSPACE}/${OS}") {
 
@@ -187,10 +184,8 @@ pipeline {
 
                                 }
                             }
-                        }
+                        }]
                     }
-
-                    parallel(tasks)
                 }
             }
 
