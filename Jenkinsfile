@@ -73,18 +73,20 @@ pipeline {
         }
 
         stage('Distributions') {
-            script {
-                parallel {
-                    for (OS in OSList) {
+            parallel {
+                steps {
+                    script {
+                        for (OS in OSList) {
 
-                        ws("${WORKSPACE}/${OS}") {
+                            ws("${WORKSPACE}/${OS}") {
 
-                            stage("${OS} Clone") {
-                                checkout scm;
+                                stage("${OS} Clone") {
+                                    checkout scm;
+                                }
+
                             }
 
                         }
-
                     }
                 }
             }
