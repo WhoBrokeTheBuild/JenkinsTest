@@ -177,20 +177,27 @@ pipeline {
                                         }
 
                                         stage("${OS} Test") {
-                                            sh "touch test.log"
+                                            try {
+                                                sh "touch test.log"
+                                                sh "false"
+                                            }
+                                            catch (Exception e) {
+                                                
+                                                archiveArtifacts "test.log"
+
+                                                throw e;
+                                            }
+                                            finally {
+
+                                                archiveArtifacts "test.log"
+                                                
+                                            }
 
                                         }
 
                                     }
                                 }
-                                
-                                post {
-                                    always {
-                                        ws("${WORKSPACE}/${OS}") {
-                                            archiveArtifacts "test.log"
-                                        }
-                                    }
-                                }
+
                             }
                         }
                     }
