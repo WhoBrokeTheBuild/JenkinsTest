@@ -77,63 +77,61 @@ pipeline {
 
                 stage("Ubuntu 18") {
                     agent any
-
-                    ws("${WORKSPACE}/ubuntu18") {
                             
-                        steps {
+                    steps {
+                        ws("${WORKSPACE}/ubuntu18") {
                             checkout scm;
 
                             sh "touch test.log"
                         }
+                    }
 
-                        post {
-                            always {
+                    post {
+                        always {
+                            ws("${WORKSPACE}/ubuntu18") {
                                 archiveArtifacts "test.log"
                             }
                         }
-
                     }
                 }
 
                 stage("Ubuntu 20") {
                     agent any
                             
-                        steps {
+                    steps {
+                        ws("${WORKSPACE}/ubuntu20") {
+                            checkout scm;
+
+                            sh "touch test.log"
+                        }
+                    }
+
+                    post {
+                        always {
                             ws("${WORKSPACE}/ubuntu20") {
-                                checkout scm;
-
-                                sh "touch test.log"
+                                archiveArtifacts "test.log"
                             }
                         }
-
-                        post {
-                            always {
-                                ws("${WORKSPACE}/ubuntu20") {
-                                    archiveArtifacts "test.log"
-                                }
-                            }
-                        }
-                        
                     }
                 }
 
                 stage("Ubuntu 22") {
                     agent any
-
-                    ws("${WORKSPACE}/ubuntu22") {
                             
-                        steps {
+                    steps {
+                        ws("${WORKSPACE}/ubuntu22") {
                             checkout scm;
 
                             sh "touch test.log"
                         }
+                    }
 
-                        post {
-                            always {
+                    post {
+                        always {
+                            ws("${WORKSPACE}/ubuntu22") {
                                 archiveArtifacts "test.log"
                             }
                         }
-                        
                     }
                 }
 
