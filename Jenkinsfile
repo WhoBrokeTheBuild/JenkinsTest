@@ -75,32 +75,32 @@ pipeline {
         stage('Distributions') {
             steps {
                 script {
-                    parallel {
+                    Map tasks = []
 
-                        for (OS in OSList) {
-                            
-                            stage("${OS}") {
+                    for (OS in OSList) {
+                        tasks[OS] = { ->
 
-                                ws("${WORKSPACE}/${OS}") {
+                            ws("${WORKSPACE}/${OS}") {
 
-                                    stage("${OS} Clone") {
-                                        checkout scm;
-                                    }
+                                stage("${OS} Clone") {
+                                    checkout scm;
+                                }
 
-                                    stage("${OS} Test") {
-                                        sh "touch test.log"
-                                    }
+                                stage("${OS} Test") {
+                                    sh "touch test.log"
+                                }
+                                
+                            }
 
-                                    post {
-                                        always {
-                                            archiveArtifacts "test.log"
-                                        }
-                                    }
-
+                            post {
+                                always {
+                                    archiveArtifacts "test.log"
                                 }
                             }
                         }
                     }
+
+                    parallel(tasks)
                 }
             }
         }
