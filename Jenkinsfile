@@ -75,7 +75,7 @@ pipeline {
         stage('Distributions') {
             steps {
                 script {
-                    Map tasks = []
+                    Map tasks = [failFast: false]
 
                     for (OS in OSList) {
                         tasks[OS] = { ->
