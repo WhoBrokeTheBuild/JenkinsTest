@@ -169,35 +169,32 @@ pipeline {
                         tasks[OS] = { ->
 
                             stage("${OS}") {
-                                steps {
-                                    ws("${WORKSPACE}/${OS}") {
+                                ws("${WORKSPACE}/${OS}") {
 
-                                        stage("${OS} Clone") {
-                                            checkout scm;
+                                    stage("${OS} Clone") {
+                                        checkout scm;
+                                    }
+
+                                    stage("${OS} Test") {
+                                        try {
+                                            sh "touch test.log"
+                                            sh "false"
                                         }
+                                        catch (Exception e) {
+                                            
+                                            archiveArtifacts "test.log"
 
-                                        stage("${OS} Test") {
-                                            try {
-                                                sh "touch test.log"
-                                                sh "false"
-                                            }
-                                            catch (Exception e) {
-                                                
-                                                archiveArtifacts "test.log"
+                                            throw e;
+                                        }
+                                        finally {
 
-                                                throw e;
-                                            }
-                                            finally {
-
-                                                archiveArtifacts "test.log"
-                                                
-                                            }
+                                            archiveArtifacts "test.log"
 
                                         }
 
                                     }
-                                }
 
+                                }
                             }
                         }
                     }
