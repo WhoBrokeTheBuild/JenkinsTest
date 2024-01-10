@@ -87,16 +87,18 @@ pipeline {
                                 }
 
                                 stage("${OS} Test") {
-                                    sh "touch test.log"
+                                    steps {
+                                        sh "touch test.log"
+                                    }
+                                    post {
+                                        always {
+                                            archiveArtifacts "test.log"
+                                        }
+                                    }
                                 }
-                                
+
                             }
 
-                            post {
-                                always {
-                                    archiveArtifacts "test.log"
-                                }
-                            }
                         }
                     }
 
