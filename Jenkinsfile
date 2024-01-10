@@ -165,7 +165,7 @@ pipeline {
                 script {
                     Map tasks = [failFast: false]
 
-                    for (OS in OSList) {
+                    for (def OS in OSList) {
                         tasks[OS] = { ->
 
                             stage("${OS}") {
