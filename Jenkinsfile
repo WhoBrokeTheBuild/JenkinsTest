@@ -180,18 +180,9 @@ pipeline {
                                             sh "touch test.log"
                                             sh "false"
                                         }
-                                        catch (Exception e) {
-                                            
-                                            archiveArtifacts "test.log"
-
-                                            throw e;
-                                        }
                                         finally {
-
                                             archiveArtifacts "test.log"
-
                                         }
-
                                     }
 
                                 }
