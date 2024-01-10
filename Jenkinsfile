@@ -165,22 +165,24 @@ pipeline {
                 script {
                     parallel OSList.collectEntries {
                         OS -> [ "${OS}": {
+                            def workspace = "${WORKSPACE}/${OS}"
+
                             stage("${OS}") {
                                 stage("${OS} Clone") {
-                                    ws("${OS}") {
+                                    ws("${workspace}") {
                                         checkout scm;
                                     }
                                 }
 
                                 stage("${OS} Test") {
                                     try {
-                                        ws("${OS}") {
+                                        ws("${workspace}") {
                                             sh "touch test.log"
                                             sh "false"
                                         }
                                     }
                                     finally {
-                                        archiveArtifacts "${OS}/test.log"
+                                        archiveArtifacts "${workspace}/test.log"
                                     }
                                 }
                             }
