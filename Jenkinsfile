@@ -73,39 +73,102 @@ pipeline {
         }
 
         stage('Distributions') {
-            steps {
-                script {
-                    Map tasks = [failFast: false]
+            parallel {
 
-                    for (OS in OSList) {
-                        tasks[OS] = { ->
-                        
-                            stage("${OS}") {
-                                ws("${WORKSPACE}/${OS}") {
+                stage("Ubuntu 18") {
+                    agent any
 
-                                    stage("${OS} Clone") {
-                                        checkout scm;
-                                    }
+                    ws("${WORKSPACE}/ubuntu18") {
+                            
+                        steps {
+                            checkout scm;
 
-                                    stage("${OS} Test") {
-                                        steps {
-                                            sh "touch test.log"
-                                        }
-                                        post {
-                                            always {
-                                                archiveArtifacts "test.log"
-                                            }
-                                        }
-                                    }
+                            sh "touch test.log"
+                        }
 
-                                }
+                        post {
+                            always {
+                                archiveArtifacts "test.log"
                             }
                         }
-                    }
 
-                    parallel(tasks)
+                    }
                 }
+
+                stage("Ubuntu 20") {
+                    agent any
+
+                    ws("${WORKSPACE}/ubuntu20") {
+                            
+                        steps {
+                            checkout scm;
+
+                            sh "touch test.log"
+                        }
+
+                        post {
+                            always {
+                                archiveArtifacts "test.log"
+                            }
+                        }
+                        
+                    }
+                }
+
+                stage("Ubuntu 22") {
+                    agent any
+
+                    ws("${WORKSPACE}/ubuntu22") {
+                            
+                        steps {
+                            checkout scm;
+
+                            sh "touch test.log"
+                        }
+
+                        post {
+                            always {
+                                archiveArtifacts "test.log"
+                            }
+                        }
+                        
+                    }
+                }
+
             }
+
+            // steps {
+            //     script {
+            //         Map tasks = [failFast: false]
+
+            //         for (OS in OSList) {
+            //             tasks[OS] = { ->
+
+            //                 stage("${OS}") {
+            //                     ws("${WORKSPACE}/${OS}") {
+
+            //                         stage("${OS} Clone") {
+            //                             checkout scm;
+            //                         }
+
+            //                         stage("${OS} Test") {
+            //                             sh "touch test.log"
+
+            //                             post {
+            //                                 always {
+            //                                     archiveArtifacts "test.log"
+            //                                 }
+            //                             }
+            //                         }
+
+            //                     }
+            //                 }
+            //             }
+            //         }
+
+            //         parallel(tasks)
+            //     }
+            // }
         }
 
         // stage('Publish') {
