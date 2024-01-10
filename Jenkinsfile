@@ -73,8 +73,8 @@ pipeline {
         }
 
         stage('Distributions') {
-            parallel {
-                script {
+            script {
+                parallel {
                     for (OS in OSList) {
 
                         ws("${WORKSPACE}/${OS}") {
