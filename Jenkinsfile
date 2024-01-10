@@ -73,124 +73,143 @@ pipeline {
         }
 
         stage('Distributions') {
-            parallel {
+            // parallel {
 
-                stage("Ubuntu 18") {
-                    agent any
+            //     stage("Ubuntu 18") {
+            //         agent any
                             
-                    steps {
-                        ws("${WORKSPACE}/ubuntu18") {
-                            stage("Clone") {
-                                steps {
-                                    checkout scm;
-                                }
-                            }
+            //         steps {
+            //             ws("${WORKSPACE}/ubuntu18") {
+            //                 stage("Clone") {
+            //                     steps {
+            //                         checkout scm;
+            //                     }
+            //                 }
 
-                            stage("Test") {
-                                steps {
-                                    sh "touch test.log"
-                                }
-                            }
-                        }
-                    }
-
-                    post {
-                        always {
-                            ws("${WORKSPACE}/ubuntu18") {
-                                archiveArtifacts "test.log"
-                            }
-                        }
-                    }
-                }
-
-                stage("Ubuntu 20") {
-                    agent any
-                            
-                    steps {
-                        ws("${WORKSPACE}/ubuntu20") {
-                            stage("Clone") {
-                                steps {
-                                    checkout scm;
-                                }
-                            }
-
-                            stage("Test") {
-                                steps {
-                                    sh "touch test.log"
-                                }
-                            }
-                        }
-                    }
-
-                    post {
-                        always {
-                            ws("${WORKSPACE}/ubuntu20") {
-                                archiveArtifacts "test.log"
-                            }
-                        }
-                    }
-                }
-
-                stage("Ubuntu 22") {
-                    agent any
-                            
-                    steps {
-                        ws("${WORKSPACE}/ubuntu22") {
-                            stage("Clone") {
-                                steps {
-                                    checkout scm;
-                                }
-                            }
-
-                            stage("Test") {
-                                steps {
-                                    sh "touch test.log"
-                                }
-                            }
-                        }
-                    }
-
-                    post {
-                        always {
-                            ws("${WORKSPACE}/ubuntu22") {
-                                archiveArtifacts "test.log"
-                            }
-                        }
-                    }
-                }
-
-            }
-
-            // steps {
-            //     script {
-            //         Map tasks = [failFast: false]
-
-            //         for (OS in OSList) {
-            //             tasks[OS] = { ->
-
-            //                 stage("${OS}") {
-            //                     ws("${WORKSPACE}/${OS}") {
-
-            //                         stage("${OS} Clone") {
-            //                             checkout scm;
-            //                         }
-
-            //                         stage("${OS} Test") {
-            //                             sh "touch test.log"
-
-            //                             post {
-            //                                 always {
-            //                                     archiveArtifacts "test.log"
-            //                                 }
-            //                             }
-            //                         }
-
+            //                 stage("Test") {
+            //                     steps {
+            //                         sh "touch test.log"
             //                     }
             //                 }
             //             }
             //         }
 
-            //         parallel(tasks)
+            //         post {
+            //             always {
+            //                 ws("${WORKSPACE}/ubuntu18") {
+            //                     archiveArtifacts "test.log"
+            //                 }
+            //             }
+            //         }
+            //     }
+
+            //     stage("Ubuntu 20") {
+            //         agent any
+                            
+            //         steps {
+            //             ws("${WORKSPACE}/ubuntu20") {
+            //                 stage("Clone") {
+            //                     steps {
+            //                         checkout scm;
+            //                     }
+            //                 }
+
+            //                 stage("Test") {
+            //                     steps {
+            //                         sh "touch test.log"
+            //                     }
+            //                 }
+            //             }
+            //         }
+
+            //         post {
+            //             always {
+            //                 ws("${WORKSPACE}/ubuntu20") {
+            //                     archiveArtifacts "test.log"
+            //                 }
+            //             }
+            //         }
+            //     }
+
+            //     stage("Ubuntu 22") {
+            //         agent any
+                            
+            //         steps {
+            //             ws("${WORKSPACE}/ubuntu22") {
+            //                 stage("Clone") {
+            //                     steps {
+            //                         checkout scm;
+            //                     }
+            //                 }
+
+            //                 stage("Test") {
+            //                     steps {
+            //                         sh "touch test.log"
+            //                     }
+            //                 }
+            //             }
+            //         }
+
+            //         post {
+            //             always {
+            //                 ws("${WORKSPACE}/ubuntu22") {
+            //                     archiveArtifacts "test.log"
+            //                 }
+            //             }
+            //         }
+            //     }
+
+            // }
+
+            steps {
+                script {
+                    Map tasks = [failFast: false]
+
+                    for (OS in OSList) {
+                        tasks[OS] = { ->
+
+                            stage("${OS}") {
+                                steps {
+                                    ws("${WORKSPACE}/${OS}") {
+
+                                        stage("${OS} Clone") {
+                                            checkout scm;
+                                        }
+
+                                        stage("${OS} Test") {
+                                            sh "touch test.log"
+
+                                        }
+
+                                    }
+                                }
+                                
+                                post {
+                                    always {
+                                        ws("${WORKSPACE}/${OS}") {
+                                            archiveArtifacts "test.log"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    parallel(tasks)
+                }
+            }
+
+            // post {
+            //     always {
+            //         parallel OSList.collectEntries {
+            //             OS -> [
+            //                 "${OS}": {
+            //                     ws("${WORKSPACE}/${OS}") {
+            //                         archiveArtifacts "test.log"
+            //                     }
+            //                 }
+            //             ]
+            //         }
             //     }
             // }
         }
