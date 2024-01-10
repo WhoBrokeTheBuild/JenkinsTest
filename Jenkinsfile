@@ -79,26 +79,27 @@ pipeline {
 
                     for (OS in OSList) {
                         tasks[OS] = { ->
+                        
+                            stage("${OS}") {
+                                ws("${WORKSPACE}/${OS}") {
 
-                            ws("${WORKSPACE}/${OS}") {
-
-                                stage("${OS} Clone") {
-                                    checkout scm;
-                                }
-
-                                stage("${OS} Test") {
-                                    steps {
-                                        sh "touch test.log"
+                                    stage("${OS} Clone") {
+                                        checkout scm;
                                     }
-                                    post {
-                                        always {
-                                            archiveArtifacts "test.log"
+
+                                    stage("${OS} Test") {
+                                        steps {
+                                            sh "touch test.log"
+                                        }
+                                        post {
+                                            always {
+                                                archiveArtifacts "test.log"
+                                            }
                                         }
                                     }
+
                                 }
-
                             }
-
                         }
                     }
 
