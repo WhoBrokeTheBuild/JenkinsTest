@@ -102,6 +102,8 @@ if create_release_response.status_code != 201:
     print(create_release_response.content.decode())
     exit(1)
 
+print(create_release_response.json())
+
 for file in args.files:
 
     file_name = os.path.basename(file)
