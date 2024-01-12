@@ -258,18 +258,14 @@ pipeline {
                         ws("${WORKSPACE}/publish") {
                             def tag = "${BRANCH_NAME}_release-" + new_version.replaceAll("\\.", "-")
 
-                            echo "Publishing tag ${tag}"
-                            sh "git tag ${tag}"
-                            sh "git push --tags"
-
-                            echo "Creating GitHub Release"
+                            echo "Creating GitHub Release and Tag"
                             withCredentials([usernamePassword(credentialsId: 'MDSplus Test',
                                                             usernameVariable: 'GITHUB_APP',
                                                             passwordVariable: 'GITHUB_ACCESS_TOKEN')]) {
 
                                 // TODO: Protect against spaces in filenames
                                 def release_file_list_arg = release_file_list.join(" ")
-                                sh "./deploy/create_github_release.py --branch ${BRANCH_NAME} --tag ${tag} --api-token \$GITHUB_ACCESS_TOKEN ${release_file_list}"
+                                sh "./deploy/create_github_release.py --branch ${BRANCH_NAME} --tag ${tag} --api-token \$GITHUB_ACCESS_TOKEN ${release_file_list_arg}"
                             }
 
                         }
