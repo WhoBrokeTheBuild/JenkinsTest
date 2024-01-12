@@ -63,17 +63,19 @@ create_release = {
 }
 
 create_release_response = requests.post(f'{API_URL}/releases', json=create_release, headers=headers)
-print(create_release_response.status_code)
 if create_release_response.status_code != 201:
     print(create_release_response.content.decode())
     exit(1)
 
 assets_url = create_release_response.json()['assets_url']
 
+asset_headers = headers
+asset_headers['Content-Type'] = 'application/octet-stream'
+
 for file in args.files:
 
     file_name = os.path.basename(file)
-    data = open(file).read()
+    data = open(file, 'rb').read()
 
     upload_release_asset_response = requests.post(f'{assets_url}?name={file_name}', data=data)
     print(upload_release_asset_response.request.headers)

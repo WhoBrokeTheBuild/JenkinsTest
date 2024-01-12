@@ -245,7 +245,7 @@ pipeline {
                                     // }
 
                                     stage("${OS} Publish") {
-                                        sh "touch test-${OS}.txt"
+                                        sh "echo 'hello' > test-${OS}.txt"
                                         release_file_list.add("${WORKSPACE}/test-${OS}.txt")
                                         // sh "./deploy/build.sh --os=${OS} --publish=${new_version} --publishdir=/tmp/publish"
                                     }
