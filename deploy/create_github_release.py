@@ -77,7 +77,7 @@ for file in args.files:
     file_name = os.path.basename(file)
     data = open(file, 'rb').read()
 
-    upload_release_asset_response = requests.post(f'{assets_url}?name={file_name}', data=data)
+    upload_release_asset_response = requests.post(f'{assets_url}?name={file_name}', data=data, headers=asset_headers)
     print(upload_release_asset_response.request.headers)
     print(upload_release_asset_response.request.url)
     if upload_release_asset_response.status_code != 201:
