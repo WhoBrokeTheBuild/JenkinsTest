@@ -6,8 +6,8 @@ import argparse
 import subprocess
 import shutil
 
-# API_URL = 'https://api.github.com/repos/MDSplus/mdsplus/'
-API_URL = 'https://api.github.com/repos/WhoBrokeTheBuild/JenkinsTest/'
+# API_URL = 'https://api.github.com/repos/MDSplus/mdsplus'
+API_URL = 'https://api.github.com/repos/WhoBrokeTheBuild/JenkinsTest'
 
 parser = argparse.ArgumentParser()
 
