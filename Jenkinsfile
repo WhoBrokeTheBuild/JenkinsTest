@@ -265,7 +265,7 @@ pipeline {
 
                                 // TODO: Protect against spaces in filenames
                                 def release_file_list_arg = release_file_list.join(" ")
-                                sh "./deploy/create_github_release.py --branch ${BRANCH_NAME} --tag ${tag} --api-token \$GITHUB_ACCESS_TOKEN ${release_file_list_arg}"
+                                sh "./deploy/create_github_release.py --tag ${tag} --api-token \$GITHUB_ACCESS_TOKEN ${release_file_list_arg}"
                             }
 
                         }

@@ -22,11 +22,6 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    '--branch',
-    required=True
-)
-
-parser.add_argument(
     '--tag',
     required=True
 )
@@ -58,36 +53,6 @@ headers = {
     'X-GitHub-Api-Version': '2022-11-28', # TODO: Is this needed?
 }
 
-# create_tag = {
-#    'tag': args.tag,
-#    'message': args.tag,
-#    'object': git_hash,
-#    'type': 'commit',
-#    'tagger': {
-#       'name': args.github_name,
-#       'email': args.github_email,
-#    },
-# }
-
-# print(f'Tagging {git_hash} as {args.tag}')
-
-# create_tag_response = requests.post(f'{API_URL}/git/tags', json=create_tag, headers=headers)
-# if create_tag_response.status_code != 201:
-#     print(create_tag_response.content.decode())
-#     exit(1)
-
-# create_reference = {
-#     'ref': f'refs/tag/{args.tag}',
-#     'sha': git_hash,
-# }
-
-# print(f'Creating refs/tag/{args.tag}')
-
-# create_reference_response = requests.post(f'{API_URL}/git/refs', json=create_reference, headers=headers)
-# if create_reference_response.status_code != 201:
-#     print(create_reference_response.content.decode())
-#     exit(1)
-
 print('Creating release')
 
 create_release = {
@@ -111,6 +76,8 @@ for file in args.files:
     data = open(file).read()
 
     upload_release_asset_response = requests.post(f'{API_URL}/releases/{release_id}/assets?name={file_name}', data=data)
+    print(upload_release_asset_response.request.url)
+    print(upload_release_asset_response.request.content)
     if upload_release_asset_response.status_code != 201:
         print(upload_release_asset_response.content.decode())
         # attempt to upload the rest of the files
