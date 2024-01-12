@@ -58,48 +58,48 @@ headers = {
     'X-GitHub-Api-Version': '2022-11-28', # TODO: Is this needed?
 }
 
-create_tag = {
-   'tag': args.tag,
-   'message': args.tag,
-   'object': git_hash,
-   'type': 'commit',
-   'tagger': {
-      'name': args.github_name,
-      'email': args.github_email,
-   },
-}
+# create_tag = {
+#    'tag': args.tag,
+#    'message': args.tag,
+#    'object': git_hash,
+#    'type': 'commit',
+#    'tagger': {
+#       'name': args.github_name,
+#       'email': args.github_email,
+#    },
+# }
 
-print(f'Tagging {git_hash} as {args.tag}')
+# print(f'Tagging {git_hash} as {args.tag}')
 
-create_tag_response = requests.post(f'{API_URL}/git/tags', json=create_tag, headers=headers)
-if create_tag_response.status_code != 201:
-    print(create_tag_response.content)
-    exit(1)
+# create_tag_response = requests.post(f'{API_URL}/git/tags', json=create_tag, headers=headers)
+# if create_tag_response.status_code != 201:
+#     print(create_tag_response.content.decode())
+#     exit(1)
 
-create_reference = {
-    'ref': f'refs/tag/{args.tag}',
-    'sha': git_hash,
-}
+# create_reference = {
+#     'ref': f'refs/tag/{args.tag}',
+#     'sha': git_hash,
+# }
 
-print(f'Creating refs/tag/{args.tag}')
+# print(f'Creating refs/tag/{args.tag}')
 
-create_reference_response = requests.post(f'{API_URL}/git/refs', json=create_reference, headers=headers)
-if create_reference_response.status_code != 201:
-    print(create_reference_response.content)
-    exit(1)
+# create_reference_response = requests.post(f'{API_URL}/git/refs', json=create_reference, headers=headers)
+# if create_reference_response.status_code != 201:
+#     print(create_reference_response.content.decode())
+#     exit(1)
 
 print('Creating release')
 
 create_release = {
     'tag_name': args.tag,
-    'target_commitish': args.branch,
+    'target_commitish': git_hash,
     # This will automatically generate the name and body of the release
     'generate_release_notes': True
 }
 
 create_release_response = requests.post(f'{API_URL}/releases', json=create_release, headers=headers)
 if create_release_response.status_code != 201:
-    print(create_release_response.content)
+    print(create_release_response.content.decode())
     exit(1)
 
 for file in args.files:
@@ -110,5 +110,5 @@ for file in args.files:
 
     upload_release_asset_response = requests.post(f'{API_URL}/releases/{release_id}/assets?name={file_name}', data=data)
     if upload_release_asset_response.status_code != 201:
-        print(upload_release_asset_response.content)
+        print(upload_release_asset_response.content.decode())
         # attempt to upload the rest of the files
