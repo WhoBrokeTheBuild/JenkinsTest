@@ -68,17 +68,16 @@ if create_release_response.status_code != 201:
     print(create_release_response.content.decode())
     exit(1)
 
-print(create_release_response.json())
+assets_url = create_release_response.json()['assets_url']
 
 for file in args.files:
 
     file_name = os.path.basename(file)
-    release_id = create_release_response.json()['id']
     data = open(file).read()
 
-    upload_release_asset_response = requests.post(f'{API_URL}/releases/{release_id}/assets?name={file_name}', data=data)
+    upload_release_asset_response = requests.post(f'{assets_url}?name={file_name}', data=data)
+    print(upload_release_asset_response.request.headers)
     print(upload_release_asset_response.request.url)
-    print(upload_release_asset_response.request.content)
     if upload_release_asset_response.status_code != 201:
         print(upload_release_asset_response.content.decode())
         # attempt to upload the rest of the files
