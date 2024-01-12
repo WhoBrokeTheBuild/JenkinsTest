@@ -73,7 +73,7 @@ print(f'Tagging {git_hash} as {args.tag}')
 
 create_tag_response = requests.post(f'{API_URL}/git/tags', json=create_tag, headers=headers)
 if create_tag_response.status_code != 201:
-    print(create_tag_response.body)
+    print(create_tag_response.content)
     exit(1)
 
 create_reference = {
@@ -85,7 +85,7 @@ print(f'Creating refs/tag/{args.tag}')
 
 create_reference_response = requests.post(f'{API_URL}/git/refs', json=create_reference, headers=headers)
 if create_reference_response.status_code != 201:
-    print(create_reference_response.body)
+    print(create_reference_response.content)
     exit(1)
 
 print('Creating release')
@@ -99,7 +99,7 @@ create_release = {
 
 create_release_response = requests.post(f'{API_URL}/releases', json=create_release, headers=headers)
 if create_release_response.status_code != 201:
-    print(create_release_response.body)
+    print(create_release_response.content)
     exit(1)
 
 for file in args.files:
@@ -110,5 +110,5 @@ for file in args.files:
 
     upload_release_asset_response = requests.post(f'{API_URL}/releases/{release_id}/assets?name={file_name}', data=data)
     if upload_release_asset_response.status_code != 201:
-        print(upload_release_asset_response.body)
+        print(upload_release_asset_response.content)
         # attempt to upload the rest of the files
