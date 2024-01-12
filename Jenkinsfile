@@ -204,17 +204,17 @@ pipeline {
         //     // }
         // }
 
-        stage('Additional Testing') {
-            parallel {
-                stage("Test IDL") {
-                    sh "Testing IDL"
-                }
+        // stage('Additional Testing') {
+        //     parallel {
+        //         stage("Test IDL") {
+        //             sh "Testing IDL"
+        //         }
 
-                stage("Test MATLAB") {
-                    sh "Testing MATLAB"
-                }
-            }
-        }
+        //         stage("Test MATLAB") {
+        //             sh "Testing MATLAB"
+        //         }
+        //     }
+        // }
 
         stage('Publish') {
             steps {
@@ -277,36 +277,6 @@ pipeline {
                 }
             }
         }
-
-        // stage('Publish') {
-        //     when {
-        //         allOf {
-        //             anyOf {
-        //                 branch 'alpha';
-        //                 branch 'stable';
-        //             }
-
-        //             triggeredBy 'TimerTrigger'
-        //         }
-        //     }
-        //     steps {
-        //         script {
-        //             dynamicMatrix([
-        //                 failFast: false,
-        //                 axes: [
-        //                     OS: OSList
-        //                 ],
-        //                 actions: {
-        //                     ws("${WORKSPACE}/${OS}") {
-        //                         stage("${OS} Publish") {
-        //                             echo "Publishing ${BRANCH_NAME}..."
-        //                         }        
-        //                     }
-        //                 }
-        //             ])
-        //         }
-        //     }
-        // }
     }
     post {
         always {
