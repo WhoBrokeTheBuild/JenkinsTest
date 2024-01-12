@@ -63,6 +63,7 @@ create_release = {
 }
 
 create_release_response = requests.post(f'{API_URL}/releases', json=create_release, headers=headers)
+print(create_release_response.status_code)
 if create_release_response.status_code != 201:
     print(create_release_response.content.decode())
     exit(1)
