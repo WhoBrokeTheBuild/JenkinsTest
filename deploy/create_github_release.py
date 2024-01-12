@@ -13,13 +13,11 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument(
     '--github-name',
-    required=True,
     default='MDSplusBuilder'
 )
 
 parser.add_argument(
     '--github-email',
-    required=True,
     default='mdsplusadmin@psfc.mit.edu'
 )
 
