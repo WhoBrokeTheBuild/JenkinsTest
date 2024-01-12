@@ -8,6 +8,7 @@ import shutil
 
 # API_URL = 'https://api.github.com/repos/MDSplus/mdsplus'
 API_URL = 'https://api.github.com/repos/WhoBrokeTheBuild/JenkinsTest'
+UPLOAD_URL = 'https://uploads.github.com/repos/WhoBrokeTheBuild/JenkinsTest'
 
 parser = argparse.ArgumentParser()
 
@@ -63,12 +64,11 @@ create_release = {
 }
 
 create_release_response = requests.post(f'{API_URL}/releases', json=create_release, headers=headers)
-print(create_release_response.json())
 if create_release_response.status_code != 201:
     print(create_release_response.content.decode())
     exit(1)
 
-uploads_url = create_release_response.json()['uploads_url']
+release_id = create_release_response.json()['id']
 
 asset_headers = headers
 asset_headers['Content-Type'] = 'application/octet-stream'
@@ -78,7 +78,7 @@ for file in args.files:
     file_name = os.path.basename(file)
     data = open(file, 'rb').read()
 
-    upload_release_asset_response = requests.post(f'{uploads_url}?name={file_name}', data=data, headers=asset_headers)
+    upload_release_asset_response = requests.post(f'{UPLOAD_URL}/releases/{release_id}/assets?name={file_name}', data=data, headers=asset_headers)
     print(upload_release_asset_response.request.headers)
     print(upload_release_asset_response.request.url)
     if upload_release_asset_response.status_code != 201:
