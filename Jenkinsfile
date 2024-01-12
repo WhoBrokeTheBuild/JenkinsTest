@@ -72,137 +72,210 @@ pipeline {
             }
         }
 
-        stage('Distributions') {
-            // parallel {
+        // stage('Distributions') {
+        //     // parallel {
 
-            //     stage("Ubuntu 18") {
-            //         agent any
+        //     //     stage("Ubuntu 18") {
+        //     //         agent any
                             
-            //         steps {
-            //             ws("${WORKSPACE}/ubuntu18") {
-            //                 stage("Clone") {
-            //                     steps {
-            //                         checkout scm;
-            //                     }
-            //                 }
+        //     //         steps {
+        //     //             ws("${WORKSPACE}/ubuntu18") {
+        //     //                 stage("Clone") {
+        //     //                     steps {
+        //     //                         checkout scm;
+        //     //                     }
+        //     //                 }
 
-            //                 stage("Test") {
-            //                     steps {
-            //                         sh "touch test.log"
-            //                     }
-            //                 }
-            //             }
-            //         }
+        //     //                 stage("Test") {
+        //     //                     steps {
+        //     //                         sh "touch test.log"
+        //     //                     }
+        //     //                 }
+        //     //             }
+        //     //         }
 
-            //         post {
-            //             always {
-            //                 ws("${WORKSPACE}/ubuntu18") {
-            //                     archiveArtifacts "test.log"
-            //                 }
-            //             }
-            //         }
-            //     }
+        //     //         post {
+        //     //             always {
+        //     //                 ws("${WORKSPACE}/ubuntu18") {
+        //     //                     archiveArtifacts "test.log"
+        //     //                 }
+        //     //             }
+        //     //         }
+        //     //     }
 
-            //     stage("Ubuntu 20") {
-            //         agent any
+        //     //     stage("Ubuntu 20") {
+        //     //         agent any
                             
-            //         steps {
-            //             ws("${WORKSPACE}/ubuntu20") {
-            //                 stage("Clone") {
-            //                     steps {
-            //                         checkout scm;
-            //                     }
-            //                 }
+        //     //         steps {
+        //     //             ws("${WORKSPACE}/ubuntu20") {
+        //     //                 stage("Clone") {
+        //     //                     steps {
+        //     //                         checkout scm;
+        //     //                     }
+        //     //                 }
 
-            //                 stage("Test") {
-            //                     steps {
-            //                         sh "touch test.log"
-            //                     }
-            //                 }
-            //             }
-            //         }
+        //     //                 stage("Test") {
+        //     //                     steps {
+        //     //                         sh "touch test.log"
+        //     //                     }
+        //     //                 }
+        //     //             }
+        //     //         }
 
-            //         post {
-            //             always {
-            //                 ws("${WORKSPACE}/ubuntu20") {
-            //                     archiveArtifacts "test.log"
-            //                 }
-            //             }
-            //         }
-            //     }
+        //     //         post {
+        //     //             always {
+        //     //                 ws("${WORKSPACE}/ubuntu20") {
+        //     //                     archiveArtifacts "test.log"
+        //     //                 }
+        //     //             }
+        //     //         }
+        //     //     }
 
-            //     stage("Ubuntu 22") {
-            //         agent any
+        //     //     stage("Ubuntu 22") {
+        //     //         agent any
                             
-            //         steps {
-            //             ws("${WORKSPACE}/ubuntu22") {
-            //                 stage("Clone") {
-            //                     steps {
-            //                         checkout scm;
-            //                     }
-            //                 }
+        //     //         steps {
+        //     //             ws("${WORKSPACE}/ubuntu22") {
+        //     //                 stage("Clone") {
+        //     //                     steps {
+        //     //                         checkout scm;
+        //     //                     }
+        //     //                 }
 
-            //                 stage("Test") {
-            //                     steps {
-            //                         sh "touch test.log"
-            //                     }
-            //                 }
-            //             }
-            //         }
+        //     //                 stage("Test") {
+        //     //                     steps {
+        //     //                         sh "touch test.log"
+        //     //                     }
+        //     //                 }
+        //     //             }
+        //     //         }
 
-            //         post {
-            //             always {
-            //                 ws("${WORKSPACE}/ubuntu22") {
-            //                     archiveArtifacts "test.log"
-            //                 }
-            //             }
-            //         }
-            //     }
+        //     //         post {
+        //     //             always {
+        //     //                 ws("${WORKSPACE}/ubuntu22") {
+        //     //                     archiveArtifacts "test.log"
+        //     //                 }
+        //     //             }
+        //     //         }
+        //     //     }
 
-            // }
+        //     // }
 
+        //     steps {
+        //         script {
+        //             parallel OSList.collectEntries {
+        //                 OS -> [ "${OS}": {
+        //                     stage("${OS}") {
+        //                         stage("${OS} Clone") {
+        //                             ws("${WORKSPACE}/${OS}") {
+        //                                 checkout scm;
+        //                             }
+        //                         }
+
+        //                         stage("${OS} Test") {
+        //                             try {
+        //                                 ws("${WORKSPACE}/${OS}") {
+        //                                     sh "touch test.log"
+        //                                     sh "false"
+        //                                 }
+        //                             }
+        //                             finally {
+        //                                 archiveArtifacts "${OS}/test.log"
+        //                             }
+        //                         }
+        //                     }
+        //                 }]
+        //             }
+        //         }
+        //     }
+
+        //     // post {
+        //     //     always {
+        //     //         parallel OSList.collectEntries {
+        //     //             OS -> [
+        //     //                 "${OS}": {
+        //     //                     ws("${WORKSPACE}/${OS}") {
+        //     //                         archiveArtifacts "test.log"
+        //     //                     }
+        //     //                 }
+        //     //             ]
+        //     //         }
+        //     //     }
+        //     // }
+        // }
+
+        stage('Additional Testing') {
+            parallel {
+                stage("Test IDL") {
+                    sh "Testing IDL"
+                }
+
+                stage("Test MATLAB") {
+                    sh "Testing MATLAB"
+                }
+            }
+        }
+
+        stage('Publish') {
             steps {
                 script {
-                    parallel OSList.collectEntries {
-                        OS -> [ "${OS}": {
-                            stage("${OS}") {
-                                stage("${OS} Clone") {
-                                    ws("${WORKSPACE}/${OS}") {
-                                        checkout scm;
-                                    }
-                                }
+                    def new_version = "1.2.3"
+                
+                    stage("Calculate Version") {
+                        ws("${WORKSPACE}/publish") {
+                            checkout scm;
 
-                                stage("${OS} Test") {
-                                    try {
-                                        ws("${WORKSPACE}/${OS}") {
-                                            sh "touch test.log"
-                                            sh "false"
-                                        }
-                                    }
-                                    finally {
-                                        sh "ls ${WORKSPACE}/${OS}"
-                                        archiveArtifacts "${OS}/test.log"
+                            // def new_version = sh(
+                            //     script: "./deploy/get_new_version.py",
+                            //     returnStdout: true
+                            // ).trim()
+
+                            echo "Calculated new version to be ${new_version}"
+                        }
+                    }
+
+                    release_file_list = []
+
+                    parallel OSList.findAll{ OS -> (!OS.startsWith("test-")) }.collectEntries {
+                        OS -> [ "${OS} Release & Publish": {
+                            stage("${OS} Release & Publish") {
+                                ws("${WORKSPACE}/${OS}") {
+                                    // stage("${OS} Release") {
+                                    //     sh "./deploy/build.sh --os=${OS} --release=${new_version}"
+                                    // }
+
+                                    stage("${OS} Publish") {
+                                        sh "touch test-${OS}.txt"
+                                        release_file_list.add("${WORKSPACE}/test-${OS}.txt")
+                                        // sh "./deploy/build.sh --os=${OS} --publish=${new_version} --publishdir=/tmp/publish"
                                     }
                                 }
                             }
                         }]
                     }
+
+                    stage("Publish Version") {
+                        ws("${WORKSPACE}/publish") {
+                            def tag = "${BRANCH_NAME}_release-" + new_version.replaceAll("\\.", "-")
+
+                            echo "Publishing tag ${tag}"
+                            sh "git tag ${tag}"
+                            sh "git push --tags"
+
+                            echo "Creating GitHub Release"
+                            withCredentials([usernamePassword(credentialsId: 'MDSplus Test',
+                                                            usernameVariable: 'GITHUB_APP',
+                                                            passwordVariable: 'GITHUB_ACCESS_TOKEN')]) {
+
+                                // TODO: Protect against spaces in filenames
+                                def release_file_list_arg = release_file_list.join(" ")
+                                sh "./deploy/create_github_release.py --branch ${BRANCH_NAME} --tag ${tag} --api-token \$GITHUB_ACCESS_TOKEN ${release_file_list}"
+                            }
+
+                        }
+                    }
                 }
             }
-
-            // post {
-            //     always {
-            //         parallel OSList.collectEntries {
-            //             OS -> [
-            //                 "${OS}": {
-            //                     ws("${WORKSPACE}/${OS}") {
-            //                         archiveArtifacts "test.log"
-            //                     }
-            //                 }
-            //             ]
-            //         }
-            //     }
-            // }
         }
 
         // stage('Publish') {
