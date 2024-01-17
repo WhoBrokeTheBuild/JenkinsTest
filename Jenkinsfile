@@ -159,7 +159,7 @@ pipeline {
                                         // }
 
                                         stage("${OS} Publish") {
-                                            sh "echo 'hello' > tarfiles/test-${OS}.tgz"
+                                            sh "mkdir tarfiles; echo 'hello' > tarfiles/test-${OS}.tgz"
 
                                             release_file_list.addAll(findFiles(glob: 'tarfiles/*.tgz'))
 
