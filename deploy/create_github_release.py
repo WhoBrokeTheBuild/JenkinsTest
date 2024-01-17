@@ -40,6 +40,17 @@ parser.add_argument(
 args = parser.parse_args()
 
 git_executable = shutil.which('git')
+
+result = subprocess.run(
+    [ git_executable, 'rev-parse', args.tag ],
+    stdout=subprocess.PIPE,
+    stderr=subprocess.STDOUT
+)
+
+if result.status_code == 0:
+    print(f"The tag {args.tag} already exists, exiting")
+    exit(0)
+
 result = subprocess.run(
     [ git_executable, 'rev-parse', 'HEAD'],
     stdout=subprocess.PIPE,

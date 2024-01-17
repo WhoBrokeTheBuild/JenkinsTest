@@ -72,137 +72,50 @@ pipeline {
             }
         }
 
-        // stage('Distributions') {
-        //     // parallel {
+        stage('Distributions') {
+            steps {
+                script {
+                    parallel OSList.collectEntries {
+                        OS -> [ "${OS} Build & Test": {
+                            stage("${OS} Build & Test") {
+                                ws("${WORKSPACE}/${OS}") {
+                                    stage("${OS} Clone") {
+                                        checkout scm;
+                                    }
 
-        //     //     stage("Ubuntu 18") {
-        //     //         agent any
-                            
-        //     //         steps {
-        //     //             ws("${WORKSPACE}/ubuntu18") {
-        //     //                 stage("Clone") {
-        //     //                     steps {
-        //     //                         checkout scm;
-        //     //                     }
-        //     //                 }
+                                    // stage("${OS} Bootstrap") {
+                                    //     sh "GIT_BRANCH=\$BRANCH_NAME ./deploy/build.sh --os=bootstrap"
 
-        //     //                 stage("Test") {
-        //     //                     steps {
-        //     //                         sh "touch test.log"
-        //     //                     }
-        //     //                 }
-        //     //             }
-        //     //         }
+                                    //     if (OS.endsWith("armhf")) {
+                                    //         sh "docker run --rm --privileged multiarch/qemu-user-static:register --reset"
+                                    //     }
+                                    // }
 
-        //     //         post {
-        //     //             always {
-        //     //                 ws("${WORKSPACE}/ubuntu18") {
-        //     //                     archiveArtifacts "test.log"
-        //     //                 }
-        //     //             }
-        //     //         }
-        //     //     }
+                                    stage("${OS} Test") {
+                                        // try {
+                                        //     def network = "jenkins-${EXECUTOR_NUMBER}-${OS}"
+                                        //     sh "./deploy/build.sh --os=${OS} --test --dockernetwork=${network}"
+                                        // }
+                                        // finally {
+                                        //     sh "./deploy/tap-to-junit.py --junit-suite-name=${OS}"
+                                        //     junit skipPublishingChecks: true, testResults: 'mdsplus-junit.xml', keepLongStdio: true
 
-        //     //     stage("Ubuntu 20") {
-        //     //         agent any
-                            
-        //     //         steps {
-        //     //             ws("${WORKSPACE}/ubuntu20") {
-        //     //                 stage("Clone") {
-        //     //                     steps {
-        //     //                         checkout scm;
-        //     //                     }
-        //     //                 }
+                                        //     echo "Testing complete"
+                                        // }
+                                    }
 
-        //     //                 stage("Test") {
-        //     //                     steps {
-        //     //                         sh "touch test.log"
-        //     //                     }
-        //     //                 }
-        //     //             }
-        //     //         }
-
-        //     //         post {
-        //     //             always {
-        //     //                 ws("${WORKSPACE}/ubuntu20") {
-        //     //                     archiveArtifacts "test.log"
-        //     //                 }
-        //     //             }
-        //     //         }
-        //     //     }
-
-        //     //     stage("Ubuntu 22") {
-        //     //         agent any
-                            
-        //     //         steps {
-        //     //             ws("${WORKSPACE}/ubuntu22") {
-        //     //                 stage("Clone") {
-        //     //                     steps {
-        //     //                         checkout scm;
-        //     //                     }
-        //     //                 }
-
-        //     //                 stage("Test") {
-        //     //                     steps {
-        //     //                         sh "touch test.log"
-        //     //                     }
-        //     //                 }
-        //     //             }
-        //     //         }
-
-        //     //         post {
-        //     //             always {
-        //     //                 ws("${WORKSPACE}/ubuntu22") {
-        //     //                     archiveArtifacts "test.log"
-        //     //                 }
-        //     //             }
-        //     //         }
-        //     //     }
-
-        //     // }
-
-        //     steps {
-        //         script {
-        //             parallel OSList.collectEntries {
-        //                 OS -> [ "${OS}": {
-        //                     stage("${OS}") {
-        //                         stage("${OS} Clone") {
-        //                             ws("${WORKSPACE}/${OS}") {
-        //                                 checkout scm;
-        //                             }
-        //                         }
-
-        //                         stage("${OS} Test") {
-        //                             try {
-        //                                 ws("${WORKSPACE}/${OS}") {
-        //                                     sh "touch test.log"
-        //                                     sh "false"
-        //                                 }
-        //                             }
-        //                             finally {
-        //                                 archiveArtifacts "${OS}/test.log"
-        //                             }
-        //                         }
-        //                     }
-        //                 }]
-        //             }
-        //         }
-        //     }
-
-        //     // post {
-        //     //     always {
-        //     //         parallel OSList.collectEntries {
-        //     //             OS -> [
-        //     //                 "${OS}": {
-        //     //                     ws("${WORKSPACE}/${OS}") {
-        //     //                         archiveArtifacts "test.log"
-        //     //                     }
-        //     //                 }
-        //     //             ]
-        //     //         }
-        //     //     }
-        //     // }
-        // }
+                                    // if (false && env.CHANGE_ID && !OS.startsWith("test-")) {
+                                    //     stage("${OS} Test Packaging") {
+                                    //         sh "./deploy/build.sh --os=${OS} --release"
+                                    //     }
+                                    // }
+                                }
+                            }
+                        }]
+                    }
+                }
+            }
+        }
 
         // stage('Additional Testing') {
         //     parallel {
@@ -258,7 +171,7 @@ pipeline {
                         ws("${WORKSPACE}/publish") {
                             def tag = "${BRANCH_NAME}_release-" + new_version.replaceAll("\\.", "-")
 
-                            echo "Creating GitHub Release and Tag"
+                            echo "Creating GitHub Release and Tag for ${tag}"
                             withCredentials([usernamePassword(credentialsId: 'MDSplus Test',
                                                             usernameVariable: 'GITHUB_APP',
                                                             passwordVariable: 'GITHUB_ACCESS_TOKEN')]) {
