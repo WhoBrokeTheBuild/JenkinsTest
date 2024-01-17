@@ -164,7 +164,7 @@ pipeline {
                                     stage("${OS} Publish") {
                                         sh "mkdir tarfiles; echo 'hello' > tarfiles/test-${OS}.tgz"
 
-                                        findFiles(glob: "${WORKSPACE}/tarfiles/*.tgz").each {
+                                        findFiles(glob: "tarfiles/*.tgz").each {
                                             file -> release_file_list.add(file.path)
                                         }
 
