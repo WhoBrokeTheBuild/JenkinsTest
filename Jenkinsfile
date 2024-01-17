@@ -164,7 +164,7 @@ pipeline {
                                     stage("${OS} Publish") {
                                         sh "mkdir tarfiles; echo 'hello' > tarfiles/test-${OS}.tgz"
 
-                                        release_file_list.addAll(findFiles(glob: 'tarfiles/*.tgz'))
+                                        release_file_list.addAll(findFiles(glob: "${WORKSPACE}/tarfiles/*.tgz"))
 
                                         // release_file_list.add("${WORKSPACE}/test-${OS}.txt")
                                         // sh "./deploy/build.sh --os=${OS} --publish=${new_version} --publishdir=/tmp/publish"
