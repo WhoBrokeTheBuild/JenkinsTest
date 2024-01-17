@@ -164,7 +164,9 @@ pipeline {
                                     stage("${OS} Publish") {
                                         sh "mkdir tarfiles; echo 'hello' > tarfiles/test-${OS}.tgz"
 
-                                        release_file_list.addAll(findFiles(glob: "${WORKSPACE}/tarfiles/*.tgz"))
+                                        findFiles(glob: "${WORKSPACE}/tarfiles/*.tgz").each {
+                                            file -> release_file_list.add(file.path)
+                                        }
 
                                         // release_file_list.add("${WORKSPACE}/test-${OS}.txt")
                                         // sh "./deploy/build.sh --os=${OS} --publish=${new_version} --publishdir=/tmp/publish"
@@ -181,9 +183,12 @@ pipeline {
                             echo "${release_file_list}"
 
                             echo "Creating GitHub Release and Tag for ${tag}"
-                            withCredentials([usernamePassword(credentialsId: 'MDSplus Test',
-                                                            usernameVariable: 'GITHUB_APP',
-                                                            passwordVariable: 'GITHUB_ACCESS_TOKEN')]) {
+                            withCredentials([
+                                usernamePassword(
+                                    credentialsId: 'MDSplus Test',
+                                    usernameVariable: 'GITHUB_APP',
+                                    passwordVariable: 'GITHUB_ACCESS_TOKEN'
+                                )]) {
 
                                 // TODO: Protect against spaces in filenames
                                 def release_file_list_arg = release_file_list.join(" ")
