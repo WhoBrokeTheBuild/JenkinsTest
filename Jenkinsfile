@@ -132,55 +132,62 @@ pipeline {
         stage('Publish') {
             steps {
                 script {
-                    def new_version = "1.2.3"
+                    def new_version = null
                 
                     stage("Calculate Version") {
                         ws("${WORKSPACE}/publish") {
                             checkout scm;
 
-                            // def new_version = sh(
-                            //     script: "./deploy/get_new_version.py",
-                            //     returnStdout: true
-                            // ).trim()
+                            def new_version = sh(
+                                script: "./deploy/get_new_version.py",
+                                returnStdout: true
+                            ).trim()
 
                             echo "Calculated new version to be ${new_version}"
                         }
                     }
 
-                    release_file_list = []
+                    if (new_version != null) {
+                        release_file_list = []
 
-                    parallel OSList.findAll{ OS -> (!OS.startsWith("test-")) }.collectEntries {
-                        OS -> [ "${OS} Release & Publish": {
-                            stage("${OS} Release & Publish") {
-                                ws("${WORKSPACE}/${OS}") {
-                                    // stage("${OS} Release") {
-                                    //     sh "./deploy/build.sh --os=${OS} --release=${new_version}"
-                                    // }
+                        parallel OSList.findAll{ OS -> (!OS.startsWith("test-")) }.collectEntries {
+                            OS -> [ "${OS} Release & Publish": {
+                                stage("${OS} Release & Publish") {
+                                    ws("${WORKSPACE}/${OS}") {
+                                        // stage("${OS} Release") {
+                                        //     sh "./deploy/build.sh --os=${OS} --release=${new_version}"
+                                        // }
 
-                                    stage("${OS} Publish") {
-                                        sh "echo 'hello' > test-${OS}.txt"
-                                        release_file_list.add("${WORKSPACE}/test-${OS}.txt")
-                                        // sh "./deploy/build.sh --os=${OS} --publish=${new_version} --publishdir=/tmp/publish"
+                                        stage("${OS} Publish") {
+                                            sh "echo 'hello' > tarfiles/test-${OS}.tgz"
+
+                                            release_file_list.addAll(findFiles(glob: 'tarfiles/*.tgz'))
+
+                                            // release_file_list.add("${WORKSPACE}/test-${OS}.txt")
+                                            // sh "./deploy/build.sh --os=${OS} --publish=${new_version} --publishdir=/tmp/publish"
+                                        }
                                     }
                                 }
+                            }]
+                        }
+
+                        stage("Publish Version") {
+                            ws("${WORKSPACE}/publish") {
+                                def tag = "${BRANCH_NAME}_release-" + new_version.replaceAll("\\.", "-")
+
+                                echo "${release_file_list}"
+
+                                echo "Creating GitHub Release and Tag for ${tag}"
+                                withCredentials([usernamePassword(credentialsId: 'MDSplus Test',
+                                                                usernameVariable: 'GITHUB_APP',
+                                                                passwordVariable: 'GITHUB_ACCESS_TOKEN')]) {
+
+                                    // TODO: Protect against spaces in filenames
+                                    def release_file_list_arg = release_file_list.join(" ")
+                                    sh "./deploy/create_github_release.py --tag ${tag} --api-token \$GITHUB_ACCESS_TOKEN ${release_file_list_arg}"
+                                }
+
                             }
-                        }]
-                    }
-
-                    stage("Publish Version") {
-                        ws("${WORKSPACE}/publish") {
-                            def tag = "${BRANCH_NAME}_release-" + new_version.replaceAll("\\.", "-")
-
-                            echo "Creating GitHub Release and Tag for ${tag}"
-                            withCredentials([usernamePassword(credentialsId: 'MDSplus Test',
-                                                            usernameVariable: 'GITHUB_APP',
-                                                            passwordVariable: 'GITHUB_ACCESS_TOKEN')]) {
-
-                                // TODO: Protect against spaces in filenames
-                                def release_file_list_arg = release_file_list.join(" ")
-                                sh "./deploy/create_github_release.py --tag ${tag} --api-token \$GITHUB_ACCESS_TOKEN ${release_file_list_arg}"
-                            }
-
                         }
                     }
                 }
