@@ -47,7 +47,7 @@ result = subprocess.run(
     stderr=subprocess.STDOUT
 )
 
-if result.status_code == 0:
+if result.returncode == 0:
     print(f"The tag {args.tag} already exists, exiting")
     exit(0)
 
