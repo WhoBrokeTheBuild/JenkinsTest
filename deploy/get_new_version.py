@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 
 import subprocess
 import shutil
@@ -21,7 +22,6 @@ commit_log = git(f'log {last_release_commit}..HEAD --no-merges --decorate=short 
 
 version_bump = 'SAME'
 for commit in commit_log.splitlines():
-    # print(commit)
     commit = commit.lower()
 
     if commit.startswith('feature') or commit.startswith('revert "feature'):
@@ -39,10 +39,6 @@ for commit in commit_log.splitlines():
 
     elif commit.startswith('docs') or commit.startswith('revert "docs'):
         pass
-
-    else:
-        version_bump = 'BADCOMMIT'
-        break
 
 version_parts = last_release.split('-')
 if len(version_parts) < 4:
