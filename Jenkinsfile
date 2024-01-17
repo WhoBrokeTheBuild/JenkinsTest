@@ -165,7 +165,7 @@ pipeline {
                                         sh "mkdir tarfiles; echo 'hello' > tarfiles/test-${OS}.tgz"
 
                                         findFiles(glob: "tarfiles/*.tgz").each {
-                                            file -> println file
+                                            file -> release_file_list.add(WORKSPACE + "/" + file.path)
                                         }
 
                                         // release_file_list.add("${WORKSPACE}/test-${OS}.txt")
